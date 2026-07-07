@@ -1,0 +1,61 @@
+# ---------- Environment & Secrets ----------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ---------- Go (backend) ----------
+# Compiled binaries
+/backend/tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace/module cache (rarely needed in repo)
+go.work
+go.work.sum
+
+# ---------- Node / Vue3 / Nuxt4 (frontend) ----------
+node_modules/
+.nuxt/
+.output/
+.nitro/
+.cache/
+dist/
+.vite/
+*.local
+
+# Nuxt generated types
+.nuxt/**
+
+# ---------- Docker ----------
+# Don't ignore docker-compose.yml or Dockerfiles — those you WANT tracked.
+# Only ignore local volume data if it's mounted to a folder:
+postgres-data/
+db_data/
+
+# ---------- Hasura ----------
+# Keep migrations/ and metadata/ tracked — those are your source of truth!
+# Only ignore local override files if Hasura CLI generates any temp files:
+.hasura/
+
+# ---------- OS / Editor junk ----------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# ---------- Logs ----------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---------- Uploaded files (if stored locally, not in cloud storage) ----------
+/backend/uploads/
