@@ -10,6 +10,8 @@ services:
       - db_data:/var/lib/postgresql/data
     ports:
       - "${POSTGRES_PORT}:5432"
+    networks:
+      - cinema-network
 
   graphql-engine:
     image: hasura/graphql-engine:v2.36.0
@@ -23,6 +25,12 @@ services:
       HASURA_GRAPHQL_ENABLE_CONSOLE: ${HASURA_GRAPHQL_ENABLE_CONSOLE}
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
       HASURA_GRAPHQL_DEV_MODE: ${HASURA_GRAPHQL_DEV_MODE}
+    networks:
+      - cinema-network
 
 volumes:
   db_data:
+
+networks:
+  cinema-network:
+    driver: bridge
