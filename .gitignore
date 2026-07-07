@@ -16,6 +16,8 @@
 *.test
 *.out
 
+hasura/config.yaml
+
 # Go workspace/module cache (rarely needed in repo)
 go.work
 go.work.sum
