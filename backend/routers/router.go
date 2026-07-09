@@ -18,7 +18,7 @@ func Routers( user *services.Register){
     routers.POST("/signup", user.Signup)
 	routers.POST("/login", user.Login)
 
-	routers.Run("localhost:8081")
+	routers.Run(":8081")
 
 
 }
