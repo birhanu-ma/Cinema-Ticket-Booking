@@ -1,0 +1,25 @@
+table:
+  name: schedules
+  schema: public
+object_relationships:
+  - name: cinema
+    using:
+      foreign_key_constraint_on: cinema_id
+  - name: movie
+    using:
+      foreign_key_constraint_on: movies_id
+array_relationships:
+  - name: bookmarks
+    using:
+      foreign_key_constraint_on:
+        column: schedule_id
+        table:
+          name: bookmarks
+          schema: public
+  - name: tickets
+    using:
+      foreign_key_constraint_on:
+        column: schedule_id
+        table:
+          name: tickets
+          schema: public

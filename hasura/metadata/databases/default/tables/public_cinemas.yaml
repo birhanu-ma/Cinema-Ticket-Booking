@@ -1,0 +1,11 @@
+table:
+  name: cinemas
+  schema: public
+array_relationships:
+  - name: schedules
+    using:
+      foreign_key_constraint_on:
+        column: cinema_id
+        table:
+          name: schedules
+          schema: public
