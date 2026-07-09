@@ -1,6 +1,40 @@
-actions: []
+actions:
+  - name: login
+    definition:
+      kind: synchronous
+      handler: http://host.docker.internal:8081/login
+      request_transform:
+        body:
+          action: transform
+          template: |-
+            {
+              "email": "{{$body.input.credentials.email}}",
+              "password": "{{$body.input.credentials.password}}"
+            }
+        template_engine: Kriti
+        version: 2
+  - name: signup
+    definition:
+      kind: synchronous
+      handler: http://host.docker.internal:8081/signup
+      request_transform:
+        body:
+          action: transform
+          template: |-
+            {
+              "name": "{{$body.input.user.name}}",
+              "email": "{{$body.input.user.email}}",
+              "password": "{{$body.input.user.password}}"
+            }
+        template_engine: Kriti
+        version: 2
 custom_types:
   enums: []
-  input_objects: []
-  objects: []
+  input_objects:
+    - name: LoginInput
+    - name: SignupInput
+  objects:
+    - name: LoginResponse
+    - name: SignupResponse
+    - name: User
   scalars: []
