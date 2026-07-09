@@ -1,0 +1,32 @@
+table:
+  name: users
+  schema: public
+array_relationships:
+  - name: bookmarks
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: bookmarks
+          schema: public
+  - name: payments
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: payments
+          schema: public
+  - name: ratings
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: ratings
+          schema: public
+  - name: tickets
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: tickets
+          schema: public
