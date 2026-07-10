@@ -9,3 +9,14 @@ array_relationships:
         table:
           name: movie_genres
           schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - name
+        - created_at
+        - updated_at
+        - id
+      filter: {}
+      allow_aggregations: true
+    comment: ""

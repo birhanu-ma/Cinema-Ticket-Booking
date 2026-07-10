@@ -23,3 +23,17 @@ array_relationships:
         table:
           name: tickets
           schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - price
+        - created_at
+        - start_time
+        - updated_at
+        - cinema_id
+        - id
+        - movies_id
+      filter: {}
+      allow_aggregations: true
+    comment: ""

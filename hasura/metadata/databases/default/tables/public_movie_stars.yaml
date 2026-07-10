@@ -8,3 +8,14 @@ object_relationships:
   - name: star
     using:
       foreign_key_constraint_on: star_id
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - created_at
+        - updated_at
+        - movie_id
+        - star_id
+      filter: {}
+      allow_aggregations: true
+    comment: ""
