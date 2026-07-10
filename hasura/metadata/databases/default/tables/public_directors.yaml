@@ -9,3 +9,16 @@ array_relationships:
         table:
           name: movies
           schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - name
+        - bio
+        - photo_url
+        - created_at
+        - update_at
+        - id
+      filter: {}
+      allow_aggregations: true
+    comment: ""

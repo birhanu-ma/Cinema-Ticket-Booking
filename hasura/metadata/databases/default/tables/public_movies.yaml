@@ -41,3 +41,17 @@ array_relationships:
         table:
           name: schedules
           schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - duration
+        - description
+        - title
+        - created_at
+        - updated_at
+        - director_id
+        - id
+      filter: {}
+      allow_aggregations: true
+    comment: ""

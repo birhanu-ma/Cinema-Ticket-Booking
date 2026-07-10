@@ -5,3 +5,15 @@ object_relationships:
   - name: movie
     using:
       foreign_key_constraint_on: movie_id
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - is_featured
+        - image_url
+        - created_at
+        - id
+        - movie_id
+      filter: {}
+      allow_aggregations: true
+    comment: ""
