@@ -1,4 +1,10 @@
 actions:
+  - name: initiatePayment
+    definition:
+      kind: synchronous
+      handler: http://host.docker.internal:8081/actions/initiate-payment
+    permissions:
+      - role: user
   - name: login
     definition:
       kind: synchronous
@@ -37,4 +43,5 @@ custom_types:
     - name: LoginResponse
     - name: SignupResponse
     - name: User
+    - name: PaymentInitResponse
   scalars: []

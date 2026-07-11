@@ -9,15 +9,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-
-var JwtSecret = []byte(os.Getenv("JWT_SECRET"))
-
 type HasuraClaims struct {
 	DefaultRole  string   `json:"x-hasura-default-role"`
 	AllowedRoles []string `json:"x-hasura-allowed-roles"`
 	UserID       string   `json:"x-hasura-user-id"`
 }
-
 
 type Claims struct {
 	Email string `json:"email"`
@@ -30,13 +26,25 @@ type Claims struct {
 
 const tokenTTL = 24 * time.Hour
 
+func jwtSecret() ([]byte, error) {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		return nil, errors.New("JWT_SECRET environment variable is not set")
+	}
+	return []byte(secret), nil
+}
 
 func GenerateToken(user *models.User) (string, error) {
 	if user.Role == "" {
 		return "", errors.New("user has no role set")
 	}
 
-	expirationTime := time.Now().Add(tokenTTL)
+	secret, err := jwtSecret()
+	if err != nil {
+		return "", err
+	}
+
+	now := time.Now()
 
 	claims := &Claims{
 		Email: user.Email,
@@ -49,26 +57,32 @@ func GenerateToken(user *models.User) (string, error) {
 		},
 
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expirationTime),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			Issuer:    "go-auth-service",
+			IssuedAt:  jwt.NewNumericDate(now),
+			ExpiresAt: jwt.NewNumericDate(now.Add(tokenTTL)),
 		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(JwtSecret)
+
+	return token.SignedString(secret)
 }
 
-
 func ValidateToken(tokenString string) (*Claims, error) {
+	secret, err := jwtSecret()
+	if err != nil {
+		return nil, err
+	}
+
 	claims := &Claims{}
 
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		if token.Method != jwt.SigningMethodHS256 {
 			return nil, errors.New("unexpected signing method")
 		}
-		return JwtSecret, nil
+		return secret, nil
 	})
+
 	if err != nil {
 		return nil, err
 	}

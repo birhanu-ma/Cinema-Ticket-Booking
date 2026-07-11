@@ -1,4 +1,10 @@
 type Mutation {
+  initiatePayment(
+    ticketId: uuid!
+  ): PaymentInitResponse
+}
+
+type Mutation {
   login(
     credentials: LoginInput!
   ): LoginResponse!
@@ -38,5 +44,10 @@ type User {
   name: String!
   email: String!
   role: String!
+}
+
+type PaymentInitResponse {
+  checkoutUrl: String!
+  txRef: String!
 }
 
