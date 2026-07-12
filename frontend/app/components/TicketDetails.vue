@@ -1,4 +1,3 @@
-<!-- app/components/TicketDetails.vue -->
 <script setup>
 defineProps({
   ticket: {
