@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import { useRoute } from "#app";
 
 defineProps({
@@ -7,11 +8,17 @@ defineProps({
 
 const route = useRoute();
 
+const { logout } = useAuth();
+
+const isLoggedIn = computed(() => {
+  if (import.meta.server) return false;
+
+  return !!localStorage.getItem("auth-token");
+});
+
 const isItemActive = (path) => {
-  return (
-    route.path === path ||
-    route.path.startsWith(path + "/")
-  );
+  return route.path === path ||
+  route.path.startsWith(path + "/");
 };
 </script>
 
@@ -22,11 +29,7 @@ const isItemActive = (path) => {
     </div>
 
     <div class="space-y-2">
-      <NuxtLink
-        v-for="item in menuItems"
-        :key="item.label"
-        :to="item.to"
-      >
+      <NuxtLink v-for="item in menuItems" :key="item.label" :to="item.to">
         <LayoutSidebarItem
           :icon="item.icon"
           :label="item.label"
@@ -37,9 +40,19 @@ const isItemActive = (path) => {
     </div>
 
     <button
-      class="mt-auto border border-red-600 rounded-lg py-2 text-red-500"
+      v-if="isLoggedIn"
+      @click="logout"
+      class="mt-auto border cursor-pointer border-red-600 rounded-lg py-2 text-red-500"
     >
       Logout
     </button>
+
+    <NuxtLink v-else to="/auth/login" class="mt-auto">
+      <button
+        class="w-full rounded-lg bg-lime-400 py-2 font-semibold text-black"
+      >
+        Login
+      </button>
+    </NuxtLink>
   </nav>
 </template>
