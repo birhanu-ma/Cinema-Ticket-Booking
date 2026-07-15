@@ -1,3 +1,4 @@
+```vue
 <script setup>
 import { ref } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -47,13 +48,11 @@ const onSubmit = async (values, { resetForm }) => {
 
     localStorage.setItem("auth-token", data.login.token);
 
-    alert(data.login.message);
-
     console.log("JWT:", data.login.token);
 
     resetForm();
 
-    await navigateTo("/");
+    await navigateTo("/user/movies");
   } catch (err) {
     console.error(err);
 
@@ -72,15 +71,9 @@ const onSubmit = async (values, { resetForm }) => {
 
 <template>
   <div class="w-full max-w-md rounded-xl bg-zinc-900 p-8 shadow-lg">
-    <h1 class="mb-8 text-center text-3xl font-bold text-white">
-      Welcome Back
-    </h1>
+    <h1 class="mb-8 text-center text-3xl font-bold text-white">Welcome Back</h1>
 
-    <Form
-      :validation-schema="schema"
-      @submit="onSubmit"
-      class="space-y-5"
-    >
+    <Form :validation-schema="schema" @submit="onSubmit" class="space-y-5">
       <div>
         <Field
           name="email"
@@ -88,10 +81,7 @@ const onSubmit = async (values, { resetForm }) => {
           placeholder="Email Address"
           class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 text-white outline-none focus:border-lime-500"
         />
-        <ErrorMessage
-          name="email"
-          class="mt-1 block text-sm text-red-500"
-        />
+        <ErrorMessage name="email" class="mt-1 block text-sm text-red-500" />
       </div>
 
       <div>
@@ -101,10 +91,7 @@ const onSubmit = async (values, { resetForm }) => {
           placeholder="Password"
           class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-3 text-white outline-none focus:border-lime-500"
         />
-        <ErrorMessage
-          name="password"
-          class="mt-1 block text-sm text-red-500"
-        />
+        <ErrorMessage name="password" class="mt-1 block text-sm text-red-500" />
       </div>
 
       <button
@@ -117,3 +104,4 @@ const onSubmit = async (values, { resetForm }) => {
     </Form>
   </div>
 </template>
+```
