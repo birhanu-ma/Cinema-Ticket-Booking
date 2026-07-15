@@ -12,7 +12,6 @@ const handleCinemaInsert = async (cleanPayload) => {
     cleanPayload,
   );
 
-  /
 };
 </script>
 

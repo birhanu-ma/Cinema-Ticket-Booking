@@ -3,7 +3,6 @@
 const handleGenreInsert = async (cleanPayload) => {
   console.log("Payload data packages ready for Hasura background transaction operations:", cleanPayload)
   
-  /
 }
 </script>
 
