@@ -6,7 +6,7 @@ type Mutation {
 
 type Mutation {
   login(
-    credentials: LoginInput!
+    user: LoginInput!
   ): LoginResponse!
 }
 
