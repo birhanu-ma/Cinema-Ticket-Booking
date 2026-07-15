@@ -14,11 +14,14 @@ actions:
           action: transform
           template: |-
             {
-              "email": "{{$body.input.credentials.email}}",
-              "password": "{{$body.input.credentials.password}}"
+              "email": "{{$body.input.user.email}}",
+              "password": "{{$body.input.user.password}}"
             }
         template_engine: Kriti
         version: 2
+    permissions:
+      - role: anonymous
+      - role: user
   - name: signup
     definition:
       kind: synchronous
@@ -34,6 +37,8 @@ actions:
             }
         template_engine: Kriti
         version: 2
+    permissions:
+      - role: anonymous
 custom_types:
   enums: []
   input_objects:
