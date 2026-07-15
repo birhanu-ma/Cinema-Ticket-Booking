@@ -2,22 +2,28 @@ services:
   postgres:
     image: postgres:15
     restart: always
+
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - db_data:/var/lib/postgresql/data
+
     ports:
       - "${POSTGRES_PORT}:5432"
+
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
     networks:
       - cinema-network
 
   graphql-engine:
     image: hasura/graphql-engine:v2.36.0
+    restart: always
+
     depends_on:
       - postgres
-    restart: always
+
     ports:
       - "${HASURA_PORT}:8080"
 
@@ -26,10 +32,16 @@ services:
 
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
       HASURA_GRAPHQL_ENABLE_CONSOLE: ${HASURA_GRAPHQL_ENABLE_CONSOLE}
+
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+
       HASURA_GRAPHQL_DEV_MODE: ${HASURA_GRAPHQL_DEV_MODE}
+
       HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
+
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: anonymous
 
     networks:
       - cinema-network
