@@ -1,4 +1,12 @@
 actions:
+  - name: createBooking
+    definition:
+      kind: synchronous
+      handler: http://host.docker.internal:8081/actions/create-booking
+      forward_client_headers: true
+    permissions:
+      - role: user
+    comment: This action is to create a ticket when a user order
   - name: initiatePayment
     definition:
       kind: synchronous
@@ -49,4 +57,5 @@ custom_types:
     - name: SignupResponse
     - name: User
     - name: PaymentInitResponse
+    - name: BookingResponse
   scalars: []

@@ -1,0 +1,27 @@
+table:
+  name: seats
+  schema: public
+object_relationships:
+  - name: cinema_hall
+    using:
+      foreign_key_constraint_on: hall_id
+array_relationships:
+  - name: schedule_seats
+    using:
+      foreign_key_constraint_on:
+        column: seat_id
+        table:
+          name: schedule_seats
+          schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - seat_number
+        - row_name
+        - type
+        - created_at
+        - hall_id
+        - id
+      filter: {}
+    comment: ""

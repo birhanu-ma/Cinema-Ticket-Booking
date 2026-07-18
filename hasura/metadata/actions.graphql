@@ -1,6 +1,13 @@
 type Mutation {
+  createBooking(
+    schedule_id: uuid!
+    schedule_seat_ids: [uuid!]!
+  ): BookingResponse!
+}
+
+type Mutation {
   initiatePayment(
-    ticketId: uuid!
+    booking_reference: String!
   ): PaymentInitResponse
 }
 
@@ -49,5 +56,14 @@ type User {
 type PaymentInitResponse {
   checkoutUrl: String!
   txRef: String!
+}
+
+type BookingResponse {
+  success: Boolean!
+  message: String!
+  booking_reference: String
+  ticket_ids: [uuid!]
+  payment_id: uuid
+  amount: Int
 }
 

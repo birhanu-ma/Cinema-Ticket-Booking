@@ -1,0 +1,2 @@
+CREATE TABLE "public"."schedule_seats" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "schedule_id" uuid NOT NULL DEFAULT gen_random_uuid(), "seat_id" uuid NOT NULL DEFAULT gen_random_uuid(), "status" text NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), PRIMARY KEY ("id") , FOREIGN KEY ("seat_id") REFERENCES "public"."seats"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("schedule_id") REFERENCES "public"."schedules"("id") ON UPDATE cascade ON DELETE cascade);
+CREATE EXTENSION IF NOT EXISTS pgcrypto;

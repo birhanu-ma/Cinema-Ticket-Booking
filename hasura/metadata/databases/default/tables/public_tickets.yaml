@@ -5,6 +5,15 @@ object_relationships:
   - name: schedule
     using:
       foreign_key_constraint_on: schedule_id
+  - name: schedule_seat
+    using:
+      manual_configuration:
+        column_mapping:
+          schedule_seat_id: id
+        insertion_order: null
+        remote_table:
+          name: schedule_seats
+          schema: public
   - name: user
     using:
       foreign_key_constraint_on: user_id
@@ -23,36 +32,40 @@ insert_permissions:
         user_id:
           _eq: X-Hasura-User-Id
       columns:
-        - status
+        - booking_reference
         - created_at
-        - updated_at
         - id
         - schedule_id
+        - status
+        - updated_at
         - user_id
     comment: ""
 select_permissions:
   - role: user
     permission:
       columns:
-        - status
+        - booking_reference
         - created_at
-        - updated_at
         - id
         - schedule_id
+        - status
+        - updated_at
         - user_id
       filter:
         user_id:
           _eq: X-Hasura-User-Id
+      allow_aggregations: true
     comment: ""
 update_permissions:
   - role: user
     permission:
       columns:
-        - status
+        - booking_reference
         - created_at
-        - updated_at
         - id
         - schedule_id
+        - status
+        - updated_at
         - user_id
       filter: {}
       check:

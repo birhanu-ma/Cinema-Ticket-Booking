@@ -2,9 +2,15 @@ table:
   name: schedules
   schema: public
 object_relationships:
-  - name: cinema
+  - name: hall
     using:
-      foreign_key_constraint_on: cinema_id
+      manual_configuration:
+        column_mapping:
+          hall_id: id
+        insertion_order: null
+        remote_table:
+          name: cinema_halls
+          schema: public
   - name: movie
     using:
       foreign_key_constraint_on: movies_id
@@ -15,6 +21,13 @@ array_relationships:
         column: schedule_id
         table:
           name: bookmarks
+          schema: public
+  - name: schedule_seats
+    using:
+      foreign_key_constraint_on:
+        column: schedule_id
+        table:
+          name: schedule_seats
           schema: public
   - name: tickets
     using:
@@ -31,7 +44,7 @@ select_permissions:
         - created_at
         - start_time
         - updated_at
-        - cinema_id
+        - hall_id
         - id
         - movies_id
       filter: {}

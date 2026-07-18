@@ -11,30 +11,31 @@ object_relationships:
 insert_permissions:
   - role: user
     permission:
-      check:
-        user_id:
-          _eq: X-Hasura-User-Id
+      check: {}
+      set:
+        user_id: x-hasura-User-Id
       columns:
-        - rating
         - created_at
-        - updated_at
         - id
         - movie_id
+        - rating
+        - review
+        - updated_at
         - user_id
     comment: ""
 select_permissions:
   - role: user
     permission:
       columns:
-        - rating
         - created_at
-        - updated_at
         - id
         - movie_id
+        - rating
+        - review
+        - updated_at
         - user_id
-      filter:
-        user_id:
-          _eq: X-Hasura-User-Id
+      filter: {}
+      allow_aggregations: true
     comment: ""
 update_permissions:
   - role: user

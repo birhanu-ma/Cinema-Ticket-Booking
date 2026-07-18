@@ -2,10 +2,29 @@ table:
   name: cinemas
   schema: public
 array_relationships:
-  - name: schedules
+  - name: cinema_halls
     using:
       foreign_key_constraint_on:
         column: cinema_id
         table:
+          name: cinema_halls
+          schema: public
+  - name: schedules
+    using:
+      foreign_key_constraint_on:
+        column: hall_id
+        table:
           name: schedules
           schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - location
+        - name
+        - created_at
+        - update_at
+        - id
+      filter: {}
+      allow_aggregations: true
+    comment: ""
