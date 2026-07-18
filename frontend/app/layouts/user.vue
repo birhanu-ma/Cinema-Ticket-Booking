@@ -1,8 +1,9 @@
 <script setup>
 const menuItems = [
-  { label: "Home", icon: "", to: "/user/home" },
   { label: "Movies", icon: "", to: "/user/movies" },
-  { label: "Bookmark", icon: "", to: "/user/bookmark" },
+  { label: "Bookmark", icon: "", to: "/user/bookmarks" },
+  { label: "Directors", icon: "", to: "/user/directors" },
+  { label: "Genre", icon: "", to: "/user/genres" },
 ];
 </script>
 

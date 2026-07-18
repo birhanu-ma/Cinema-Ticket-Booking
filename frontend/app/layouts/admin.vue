@@ -1,8 +1,14 @@
 <script setup>
 const menuItems = [
+  { label: "Cinema", icon: "", to: "/admin/cinema" },
+  { label: "Cinema Hall", icon: "", to: "/admin/cinemaHall" },
+  { label: "Seat", icon: "", to: "/admin/seat" },
+
   { label: "Movies", icon: "", to: "/admin/movies" },
   { label: "Directors", icon: "", to: "/admin/directors" },
   { label: "Stars", icon: "", to: "/admin/stars" },
+  { label: "Schedule", icon: "", to: "/admin/schedule" },
+
   { label: "Tickets", icon: "", to: "/admin/tickets" },
 ];
 </script>
