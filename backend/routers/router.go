@@ -16,11 +16,10 @@ func Routers(payment *services.Payment, user *services.Register) {
 	routers.POST("/signup", user.Signup)
 	routers.POST("/login", user.Login)
 
-	// Hasura Action handlers — called by Hasura, not directly by the frontend
+	routers.POST("/actions/create-booking", payment.CreateBookingAction)
 	routers.POST("/actions/initiate-payment", payment.InitiatePaymentAction)
 
-	// Third-party webhook — called by Chapa directly
-	routers.POST("/payment/webhook", payment.PaymentWebhook)
+	routers.Any("/payment/webhook", payment.PaymentWebhook)
 
 	routers.Run(":8081")
 }
