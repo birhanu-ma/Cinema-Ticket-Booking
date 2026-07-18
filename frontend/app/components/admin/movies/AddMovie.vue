@@ -13,7 +13,7 @@ const handleCreate = (resourceType) => {
       <AdminSharedAddCard
         subheading="Reservations"
         title="."
-        button-text="Create Ticket"
+        button-text="Create Movie"
         theme="green"
         @create="handleCreate('ticket')"
         :to="`/admin/movies/form/${ticketId}`"

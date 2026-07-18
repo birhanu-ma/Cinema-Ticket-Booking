@@ -1,23 +1,29 @@
 <script setup>
-const movieData = {
-  id: 1,
-  title: "Shazam! Fury of the Gods",
-  genre: "Action/Adventure",
-  rating: 4,
-  backdropUrl:
-    "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1200",
-};
+const props = defineProps({
+  movie: {
+    type: Object,
+    required: true,
+  },
+});
+
+const featuredImage = computed(() => {
+  return (
+    props.movie?.movie_images?.find((img) => img.is_featured)?.image_url ||
+    props.movie?.movie_images?.[0]?.image_url ||
+    "https://placehold.co/1200x600?text=Movie"
+  );
+});
 </script>
 
 <template>
   <div
-    v-if="movieData"
-    class="relative w-287  h-[460px] rounded-3xl overflow-hidden shadow-2xl bg-gray-950"
+    v-if="movie"
+    class="relative w-287 h-[460px] rounded-3xl overflow-hidden shadow-2xl bg-gray-950"
   >
     <img
-      :src="movieData.backdropUrl"
+      :src="featuredImage"
       class="w-full h-full object-cover"
-      alt="Movie Backdrop"
+      :alt="movie.title"
     />
 
     <div
@@ -25,8 +31,8 @@ const movieData = {
     ></div>
 
     <MovieThrillerDetails
-      :movie="movieData"
-      @watch="console.log('Playing trailer for', movieData.title)"
+      :movie="movie"
+      @watch="console.log('Playing trailer for', movie.title)"
     />
   </div>
 

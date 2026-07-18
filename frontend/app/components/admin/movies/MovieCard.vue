@@ -1,10 +1,24 @@
 <script setup>
-defineProps({
+import { computed } from "vue";
+
+const props = defineProps({
   movie: {
     type: Object,
     required: true,
   },
 });
+
+const thumbnail = computed(() => {
+  return (
+    props.movie.movie_images.find((img) => img.is_featured)?.image_url ||
+    props.movie.movie_images[0]?.image_url ||
+    "https://placehold.co/500x300?text=No+Image"
+  );
+});
+
+const genre = computed(() =>
+  props.movie.movie_genres.map((g) => g.genre.name).join(", ")
+);
 </script>
 
 <template>
@@ -15,7 +29,7 @@ defineProps({
       class="w-40 sm:w-44 relative flex-shrink-0 overflow-hidden bg-gray-900"
     >
       <img
-        :src="movie.thumbnail"
+        :src="thumbnail"
         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         alt="Movie Poster Landscape Artwork"
       />
@@ -25,8 +39,9 @@ defineProps({
     </div>
 
     <AdminMoviesMovieDetail
+      :movie-id="movie.id"
       :title="movie.title"
-      :genre="movie.genre"
+      :genre="genre"
       :duration="movie.duration"
     />
   </div>

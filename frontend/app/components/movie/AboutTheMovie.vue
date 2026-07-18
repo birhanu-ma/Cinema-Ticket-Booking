@@ -1,14 +1,12 @@
 <script setup>
 import { ref, computed } from "vue";
 
-const dummyDescription =
-  "This is an example of a long movie description that exceeds the character limit. In a real-world scenario, this would be fetched from an API, but for testing purposes, we are using this hardcoded string to ensure that our 'Read More' and 'Read Less' logic works perfectly within the Vue component.";
-
 const props = defineProps({
-  description: {
-    type: String,
-    default: dummyDescription,
+  movie: {
+    type: Object,
+    required: true,
   },
+
   maxLength: {
     type: Number,
     default: 150,
@@ -18,7 +16,7 @@ const props = defineProps({
 const isExpanded = ref(false);
 
 const displayText = computed(() => {
-  const text = props.description || "";
+  const text = props.movie?.description || "";
 
   if (isExpanded.value || text.length <= props.maxLength) {
     return text;
@@ -36,7 +34,7 @@ const displayText = computed(() => {
       {{ displayText }}
 
       <button
-        v-if="description?.length > maxLength"
+        v-if="movie?.description?.length > maxLength"
         @click="isExpanded = !isExpanded"
         class="ml-2 text-lime-400 font-medium hover:text-lime-300 transition-colors"
       >

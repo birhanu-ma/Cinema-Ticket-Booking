@@ -1,20 +1,22 @@
 <script setup>
 defineProps({
-  // Accept the ID from the database to construct the route
   movieId: {
     type: [String, Number],
     required: true,
   },
+
   title: {
     type: String,
     required: true,
   },
+
   genre: {
     type: String,
     required: true,
   },
+
   duration: {
-    type: [Number, String], 
+    type: [Number, String],
     required: true,
   },
 });
@@ -54,15 +56,37 @@ defineProps({
       <div class="flex flex-col gap-0.5">
         <span
           class="text-[10px] text-gray-500 font-bold uppercase tracking-wider"
-          >Duration</span
         >
+          Duration
+        </span>
+
         <div
           class="flex items-center gap-1.5 text-gray-300 text-xs font-semibold"
         >
           <span class="text-gray-400">🕒</span>
-          <span>{{
-            typeof duration === "number" ? `${duration} min` : duration
-          }}</span>
+
+          <span>
+            {{ typeof duration === "number" ? `${duration} min` : duration }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center justify-between gap-4">
+      <div class="flex flex-col gap-0.5">
+        <span
+          class="text-[10px] text-gray-500 font-bold uppercase tracking-wider"
+        >
+          Duration
+        </span>
+
+        <div
+          class="flex items-center gap-1.5 text-gray-300 text-xs font-semibold"
+        >
+          <span class="text-gray-400">🕒</span>
+
+          <span>
+            {{ typeof duration === "number" ? `${duration} min` : duration }}
+          </span>
         </div>
       </div>
     </div>
