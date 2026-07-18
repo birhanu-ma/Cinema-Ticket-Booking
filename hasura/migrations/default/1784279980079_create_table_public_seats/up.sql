@@ -1,0 +1,2 @@
+CREATE TABLE "public"."seats" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "hall_id" uuid NOT NULL DEFAULT gen_random_uuid(), "seat_number" int4 NOT NULL, "row_name" text NOT NULL, "type" text NOT NULL, "created_at" timestamptz NOT NULL DEFAULT now(), PRIMARY KEY ("id") , FOREIGN KEY ("hall_id") REFERENCES "public"."cinema_halls"("id") ON UPDATE cascade ON DELETE cascade, UNIQUE ("hall_id", "seat_number"));
+CREATE EXTENSION IF NOT EXISTS pgcrypto;

@@ -7,7 +7,7 @@ const handleGenreInsert = async (cleanPayload) => {
 </script>
 
 <template>
-  <div class="h-screen w-screen flex flex-row bg-gray-900 overflow-hidden text-white">
+  <div class="h-screen w-screen flex flex-row bg-linear-to-t from-[#51751f] to-transparent overflow-hidden text-white">
     <div class="flex-none">
       <Sidebar :menu-items="menuItems" />
     </div>

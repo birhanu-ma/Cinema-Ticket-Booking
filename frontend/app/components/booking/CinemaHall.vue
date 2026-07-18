@@ -1,81 +1,73 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-defineProps({
+const props = defineProps({
   hallName: String,
-  rows: { 
-    type: Array, 
-    required: true 
-  }
-})
 
-const selectedSeatId = ref(null)
+  seats: {
+    type: Array,
+    required: true,
+  },
+});
+
+const selectedSeat = ref(null);
 
 const toggleSeat = (seat) => {
-  if (!seat.available) return
-  
-  if (selectedSeatId.value === seat.id) {
-    selectedSeatId.value = null
-  } else {
-    selectedSeatId.value = seat.id
+  if (!seat.is_available) {
+    return;
   }
-}
+
+  selectedSeat.value = selectedSeat.value === seat.id ? null : seat.id;
+};
 </script>
 
 <template>
-  <div class="mt-6 flex flex-col items-center w-full">
-    <div class="w-full h-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent mb-2 rounded"></div>
-    <span class="text-gray-500 text-[10px] tracking-widest uppercase mb-6">Screen</span>
+  <div class="flex flex-col items-center w-full">
+    <div class="w-full h-1 bg-gray-700 rounded mb-3"></div>
 
-    <span class="text-lime-400 font-medium text-sm mb-4">{{ hallName }}</span>
-    <p class="text-lime-400 font-medium text-sm mb-4">Select available seat </p>
+    <p class="text-gray-500 uppercase text-xs tracking-widest mb-4">Screen</p>
 
-    
-    <div class="w-full overflow-x-auto pb-4 scrollbar-hide snap-x">
-      <div class="inline-flex gap-4 px-2">
-        <button 
-          v-for="seat in rows" 
-          :key="seat.id"
-          :disabled="!seat.available"
-          @click="toggleSeat(seat)"
-          :class="[
-            'w-11 h-11 rounded-xl font-semibold text-xs flex items-center justify-center transition-all duration-200 snap-center flex-shrink-0',
-            selectedSeatId === seat.id 
-              ? 'bg-lime-400 text-black shadow-lg shadow-lime-400/20 scale-105' 
-              : '',
-            seat.available && selectedSeatId !== seat.id
-              ? 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white' 
-              : '',
-            !seat.available 
-              ? 'bg-gray-900 text-gray-600 cursor-not-allowed border border-dashed border-gray-800' 
-              : ''
-          ]"
-        >
-          {{ seat.id }}
-        </button>
-      </div>
+    <h3 class="text-lime-400 font-semibold mb-5">
+      {{ hallName }}
+    </h3>
+
+    <div class="grid grid-cols-6 gap-3">
+      <button
+        v-for="seat in seats"
+        :key="seat.id"
+        @click="toggleSeat(seat)"
+        :disabled="!seat.is_available"
+        class="w-10 h-10 rounded-xl text-xs font-bold transition"
+        :class="
+          selectedSeat === seat.id
+            ? 'bg-lime-400 text-black scale-110'
+            : seat.is_available
+              ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              : 'bg-gray-900 text-gray-600 cursor-not-allowed'
+        "
+      >
+        {{ seat.id.slice(0, 2) }}
+      </button>
     </div>
 
-    <div class="flex gap-4 mt-4 text-[11px] text-gray-400">
-      <div class="flex items-center gap-1.5">
-        <div class="w-3 h-3 bg-gray-800 rounded-md"></div> Available
+    <div class="flex gap-5 text-xs text-gray-400 mt-6">
+      <div class="flex gap-2 items-center">
+        <div class="w-3 h-3 bg-gray-800 rounded"></div>
+
+        Available
       </div>
-      <div class="flex items-center gap-1.5">
-        <div class="w-3 h-3 bg-lime-400 rounded-md"></div> Selected
+
+      <div class="flex gap-2 items-center">
+        <div class="w-3 h-3 bg-lime-400 rounded"></div>
+
+        Selected
       </div>
-      <div class="flex items-center gap-1.5">
-        <div class="w-3 h-3 bg-gray-900 border border-dashed border-gray-800 rounded-md"></div> Taken
+
+      <div class="flex gap-2 items-center">
+        <div class="w-3 h-3 bg-gray-900 rounded"></div>
+
+        Taken
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-</style>

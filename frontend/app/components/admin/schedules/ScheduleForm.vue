@@ -1,135 +1,173 @@
 <script setup>
-import { useForm, useField } from 'vee-validate'
-import { toTypedSchema } from '@vee-validate/zod'
-import * as z from 'zod'
+import { useForm, useField } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import * as z from "zod";
 
-defineProps({
-  moviesList: { type: Array, required: true },  
-  cinemasList: { type: Array, required: true }  
-})
+const props = defineProps({
+  moviesList: {
+    type: Array,
+    required: true,
+  },
+
+  hallsList: {
+    type: Array,
+    required: true,
+  },
+});
 
 const validationSchema = toTypedSchema(
   z.object({
-    moviesId: z.string({ required_error: "Please select a movie" }).uuid(),
-    cinemaId: z.string({ required_error: "Please assign a cinema room" }).uuid(),
-    price: z
-      .number({ required_error: "Ticket price is required" })
-      .positive("Price must be a positive number"),
-    startTime: z
-      .string({ required_error: "Showtime start date and time is required" })
-      .min(1, "Please pick a valid date and time")
-  })
-)
+    moviesId: z.string().uuid("Please select a movie"),
 
-const { handleSubmit, isSubmitting, errors, resetForm } = useForm({
+    hallId: z.string().uuid("Please select a cinema hall"),
+
+    price: z.number().positive("Price must be greater than zero"),
+
+    startTime: z.string().min(1, "Please select a date"),
+  }),
+);
+
+const { handleSubmit, errors, resetForm, isSubmitting } = useForm({
   validationSchema,
+
   initialValues: {
-    moviesId: '',
-    cinemaId: '',
-    price: 0,
-    startTime: ''
-  }
-})
+    moviesId: "",
 
-const { value: moviesId } = useField('moviesId')
-const { value: cinemaId } = useField('cinemaId')
-const { value: price } = useField('price')
-const { value: startTime } = useField('startTime')
+    hallId: "",
 
-const emit = defineEmits(['submitSchedule'])
+    price: 100,
+
+    startTime: "",
+  },
+});
+
+const { value: moviesId } = useField("moviesId");
+
+const { value: hallId } = useField("hallId");
+
+const { value: price } = useField("price");
+
+const { value: startTime } = useField("startTime");
+
+const emit = defineEmits(["submitSchedule"]);
+
 const onSubmit = handleSubmit((values) => {
-  const cleanPayload = {
+  const payload = {
     movies_id: values.moviesId,
-    cinema_id: values.cinemaId,
-    price: values.price,
-    start_time: new Date(values.startTime).toISOString()
-  }
-  
-  emit('submitSchedule', cleanPayload)
-  resetForm()
-})
+
+    hall_id: values.hallId,
+
+    price: Number(values.price),
+
+    // date only
+    start_time: values.startTime,
+  };
+
+  console.log("Schedule payload:", payload);
+
+  emit("submitSchedule", payload);
+
+  resetForm();
+});
 </script>
 
 <template>
-  <div class="w-full max-w-lg bg-gray-950 border border-gray-900 rounded-3xl p-6 shadow-2xl text-white">
-    <div class="mb-6">
-      <h2 class="text-xl font-bold tracking-wide">Create Showtime Schedule</h2>
-      <p class="text-xs text-gray-500 mt-1">Bind a catalog movie to a screen hall venue time slot.</p>
-    </div>
+  <div
+    class="w-full max-w-lg bg-gray-950 border border-gray-900 rounded-3xl p-6 text-white"
+  >
+    <h2 class="text-xl font-bold mb-6">Create Movie Schedule</h2>
 
     <form @submit.prevent="onSubmit" class="space-y-5">
-      
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Select Movie</label>
-        <select 
-          v-model="moviesId" 
-          :class="['w-full bg-gray-900 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lime-400 cursor-pointer text-white', errors.moviesId ? 'border-red-500' : 'border-gray-800']"
+      <!-- MOVIE -->
+
+      <div>
+        <label class="text-xs uppercase text-gray-400"> Movie </label>
+
+        <select
+          v-model="moviesId"
+          class="w-full mt-2 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3"
         >
-          <option value="" disabled selected>Choose a movie catalog item...</option>
-          <option v-for="movie in moviesList" :key="movie.id" :value="movie.id">
+          <option value="">Select Movie</option>
+
+          <option
+            v-for="movie in props.moviesList"
+            :key="movie.id"
+            :value="movie.id"
+          >
             {{ movie.title }}
           </option>
         </select>
-        <span v-if="errors.moviesId" class="text-xs font-medium text-red-500 mt-0.5">
+
+        <p v-if="errors.moviesId" class="text-red-500 text-xs mt-1">
           {{ errors.moviesId }}
-        </span>
+        </p>
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Cinema Hall / Room Auditorium</label>
-        <select 
-          v-model="cinemaId" 
-          :class="['w-full bg-gray-900 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lime-400 cursor-pointer text-white', errors.cinemaId ? 'border-red-500' : 'border-gray-800']"
+      <!-- HALL -->
+
+      <div>
+        <label class="text-xs uppercase text-gray-400"> Cinema Hall </label>
+
+        <select
+          v-model="hallId"
+          class="w-full mt-2 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3"
         >
-          <option value="" disabled selected>Choose a viewing hall venue...</option>
-          <option v-for="cinema in cinemasList" :key="cinema.id" :value="cinema.id">
-            {{ cinema.name }}
+          <option value="">Select Hall</option>
+
+          <option
+            v-for="hall in props.hallsList"
+            :key="hall.id"
+            :value="hall.id"
+          >
+            {{ hall.name }}
           </option>
         </select>
-        <span v-if="errors.cinemaId" class="text-xs font-medium text-red-500 mt-0.5">
-          {{ errors.cinemaId }}
-        </span>
+
+        <p v-if="errors.hallId" class="text-red-500 text-xs mt-1">
+          {{ errors.hallId }}
+        </p>
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ticket Base Price</label>
-        <div class="relative">
-          <input
-            v-model.number="price"
-            type="number"
-            step="0.01"
-            placeholder="0.00"
-            :class="['w-full bg-gray-900 border rounded-xl pl-8 pr-4 py-3 text-sm focus:outline-none focus:border-lime-400 text-white', errors.price ? 'border-red-500' : 'border-gray-800']"
-          />
-          <span class="absolute left-4 top-3.5 text-sm font-bold text-gray-500 select-none">$</span>
-        </div>
-        <span v-if="errors.price" class="text-xs font-medium text-red-500 mt-0.5">
+
+      <div>
+        <label class="text-xs uppercase text-gray-400"> Ticket Price </label>
+
+        <input
+          v-model.number="price"
+          type="number"
+          min="1"
+          class="w-full mt-2 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3"
+        />
+
+        <p v-if="errors.price" class="text-red-500 text-xs mt-1">
           {{ errors.price }}
-        </span>
+        </p>
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Showtime Start Date & Time</label>
+
+      <div>
+        <label class="text-xs uppercase text-gray-400"> Show Date </label>
+
         <input
           v-model="startTime"
-          type="datetime-local"
-          :class="['w-full bg-gray-900 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lime-400 text-white scheme-dark cursor-pointer', errors.startTime ? 'border-red-500' : 'border-gray-800']"
+          type="date"
+          class="w-full mt-2 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white"
         />
-        <span v-if="errors.startTime" class="text-xs font-medium text-red-500 mt-0.5">
+
+        <p class="text-xs text-gray-500 mt-1">Select show date only</p>
+
+        <p v-if="errors.startTime" class="text-red-500 text-xs mt-1">
           {{ errors.startTime }}
-        </span>
+        </p>
       </div>
 
-      <div class="pt-2">
-        <button
-          type="submit"
-          :disabled="isSubmitting"
-          class="w-full bg-lime-400 hover:bg-lime-300 disabled:bg-gray-800 disabled:text-gray-600 text-black font-bold text-sm py-3 px-4 rounded-xl shadow-lg hover:shadow-lime-400/10 transition-all duration-200 active:scale-[0.99] cursor-pointer"
-        >
-          {{ isSubmitting ? 'Publishing Schedule Time Node...' : 'Commit Movie Schedule' }}
-        </button>
-      </div>
-
+      <button
+        type="submit"
+        :disabled="isSubmitting"
+        class="w-full bg-lime-400 text-black font-bold py-3 rounded-xl"
+      >
+        {{ isSubmitting ? "Saving..." : "Create Schedule" }}
+      </button>
     </form>
   </div>
 </template>

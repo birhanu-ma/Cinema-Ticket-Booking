@@ -12,14 +12,19 @@ select_permissions:
   - role: user
     permission:
       columns:
-        - status
-        - transaction_ref
+        - amount
+        - booking_reference
         - created_at
-        - updated_at
+        - currency
         - id
+        - payment_method
+        - status
         - ticket_id
+        - transaction_ref
+        - updated_at
         - user_id
       filter:
         user_id:
           _eq: X-Hasura-User-Id
+      allow_aggregations: true
     comment: ""

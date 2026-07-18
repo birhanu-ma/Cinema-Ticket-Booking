@@ -1,143 +1,46 @@
 <script setup>
+import { ref } from "vue";
+import { gql } from "@apollo/client/core";
+
 definePageMeta({
   layout: "admin",
 });
 
-const movieDirector = [
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-  {
-    name: "Christopher Nolan",
-    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-    bio: "Academy Award-winning filmmaker known for nonlinear storytelling.",
-    role: "Director",
-    description:
-      "He directed this thriller utilizing practical IMAX cameras to heighten environmental tension and maximize structural screen real-estate visibility.",
-  },
-];
+const { $apollo } = useNuxtApp();
+
+const GET_DIRECTORS = gql`
+  query GetDirectors {
+    directors(order_by: { name: asc }) {
+      id
+      name
+      bio
+      photo_url
+
+      movies_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+`;
+
+const directors = ref([]);
+
+try {
+  const { data } = await $apollo.query({
+    query: GET_DIRECTORS,
+  });
+
+  directors.value = data.directors;
+} catch (err) {
+  console.error(err);
+}
 </script>
 
 <template>
   <div
-    class="flex bg-linear-to-t from-[#51751f] to-transparent flex-col gap-6 h-[calc(100vh-4rem)] overflow-hidden"
+    class="flex bg-linear-to-t px-4 from-[#51751f] to-transparent flex-col gap-6 h-[calc(100vh-4rem)] overflow-hidden"
   >
     <div>
       <h1 class="text-2xl font-bold tracking-wide text-gray-100">
@@ -155,8 +58,8 @@ const movieDirector = [
       >
         <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <AdminSharedTeamCard
-            v-for="(director, index) in movieDirector"
-            :key="index"
+            v-for="director in directors"
+            :key="director.id"
             :person="director"
           />
         </div>

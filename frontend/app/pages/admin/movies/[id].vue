@@ -1,41 +1,70 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { ref } from "vue";
+import { useRoute } from "#app";
+import { gql } from "@apollo/client/core";
 
 definePageMeta({
   layout: "admin",
 });
 
 const route = useRoute();
-const movieId = route.params.id;
+const { $apollo } = useNuxtApp();
 
-const isLoading = ref(false);
-const movie = ref(null);
+const GET_MOVIE = gql`
+  query GetAdminMovie($id: uuid!) {
+    movies_by_pk(id: $id) {
+      id
+      title
+      description
+      duration
+      created_at
 
-onMounted(async () => {
-  isLoading.value = true;
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+      director {
+        id
+        name
+      }
 
-    movie.value = {
-      id: movieId,
-      title: "Shazam! Fury of the Gods",
-      genre: "Action / Comedy",
-      duration: 130, 
-      release_year: 2023,
-      rating: "PG-13",
-      synopsis:
-        "Bestowed with the powers of the gods, Billy Batson and his fellow foster kids are still learning how to juggle teenage life with having adult Super Hero alter-egos. But when the Daughters of Atlas, a vengeful trio of ancient gods, arrive on Earth in search of the magic stolen from them long ago, Billy and his family are thrust into a battle for their superpowers, their lives, and the fate of their world.",
-      poster_url:
-        "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400",
-      director: "David F. Sandberg",
-    };
-  } catch (err) {
-    console.error("Failed downloading movie data:", err);
-  } finally {
-    isLoading.value = false;
+      movie_genres {
+        genre {
+          id
+          name
+        }
+      }
+
+      movie_images {
+        image_url
+        is_featured
+      }
+
+      ratings_aggregate {
+        aggregate {
+          avg {
+            rating
+          }
+        }
+      }
+    }
   }
-});
+`;
+
+const movie = ref(null);
+const isLoading = ref(true);
+
+try {
+  const { data } = await $apollo.query({
+    query: GET_MOVIE,
+    variables: {
+      id: route.params.id,
+    },
+    fetchPolicy: "network-only",
+  });
+
+  movie.value = data.movies_by_pk;
+} catch (err) {
+  console.error(err);
+} finally {
+  isLoading.value = false;
+}
 </script>
 
 <template>
@@ -76,7 +105,8 @@ onMounted(async () => {
         >
           <img
             :src="
-              movie.poster_url ||
+              movie.movie_images.find((i) => i.is_featured)?.image_url ||
+              movie.movie_images[0]?.image_url ||
               'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=400'
             "
             class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
@@ -90,19 +120,23 @@ onMounted(async () => {
               <span
                 class="text-[10px] bg-lime-400/10 text-lime-400 font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider"
               >
-                {{ movie.genre }}
+                {{ movie.movie_genres.map((g) => g.genre.name).join(", ") }}
               </span>
+
               <span
                 class="text-[10px] bg-purple-500/10 text-purple-400 font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider"
               >
-                Rating: {{ movie.rating }}
+                Rating:
+                {{ movie.ratings_aggregate.aggregate.avg.rating ?? "N/A" }}
               </span>
+
               <span
                 class="text-[10px] bg-gray-800 text-gray-400 font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider"
               >
                 ID: {{ movie.id }}
               </span>
             </div>
+
             <h1 class="text-3xl font-extrabold tracking-wide text-gray-100">
               {{ movie.title }}
             </h1>
@@ -116,8 +150,9 @@ onMounted(async () => {
             >
               Synopsis
             </h3>
+
             <p class="text-gray-300 text-sm leading-relaxed">
-              {{ movie.synopsis || "No synopsis submitted for this film." }}
+              {{ movie.description || "No synopsis submitted for this film." }}
             </p>
           </div>
 
@@ -129,34 +164,41 @@ onMounted(async () => {
             >
               <span
                 class="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1"
-                >Director</span
               >
-              <span
-                class="text-xs font-semibold text-gray-200 block truncate"
-                >{{ movie.director }}</span
-              >
+                Director
+              </span>
+
+              <span class="text-xs font-semibold text-gray-200 block truncate">
+                {{ movie.director?.name || "Unknown" }}
+              </span>
             </div>
+
             <div
               class="bg-gray-900/50 p-4 rounded-2xl border border-gray-900/60 text-center"
             >
               <span
                 class="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1"
-                >Duration</span
               >
-              <span class="text-xs font-semibold text-lime-400 block"
-                >{{ movie.duration }} min</span
-              >
+                Duration
+              </span>
+
+              <span class="text-xs font-semibold text-lime-400 block">
+                {{ movie.duration }} min
+              </span>
             </div>
+
             <div
               class="bg-gray-900/50 p-4 rounded-2xl border border-gray-900/60 text-center"
             >
               <span
                 class="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1"
-                >Release Year</span
               >
-              <span class="text-xs font-semibold text-gray-200 block">{{
-                movie.release_year
-              }}</span>
+                Release Year
+              </span>
+
+              <span class="text-xs font-semibold text-gray-200 block">
+                {{ new Date(movie.created_at).getFullYear() }}
+              </span>
             </div>
           </div>
         </div>

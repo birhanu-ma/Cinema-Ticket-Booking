@@ -1,38 +1,74 @@
 <script setup>
-import { watch } from "vue";
 import { useForm, useField } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 
 const props = defineProps({
-  directorsList: { type: Array, required: true },
-  genresList: { type: Array, required: true },
-  starsList: { type: Array, required: true },
-  
-  initialData: { 
-    type: Object, 
-    default: null 
-  }
+  directorsList: {
+    type: Array,
+    required: true,
+  },
+
+  genresList: {
+    type: Array,
+    required: true,
+  },
+
+  starsList: {
+    type: Array,
+    required: true,
+  },
 });
 
 const validationSchema = toTypedSchema(
   z.object({
-    title: z.string({ required_error: "Movie title is required" }).min(1),
+    title: z
+      .string({
+        required_error: "Movie title is required",
+      })
+      .min(1),
+
     description: z
-      .string({ required_error: "Description is required" })
+      .string({
+        required_error: "Description is required",
+      })
       .min(10),
-    duration: z.number({ required_error: "Duration is required" }).positive(),
+
+    duration: z
+      .number({
+        required_error: "Duration is required",
+      })
+      .positive(),
+
     thumbnailUrl: z
-      .string({ required_error: "Thumbnail URL is required" })
+      .string({
+        required_error: "Thumbnail URL is required",
+      })
       .url(),
-    directorId: z.string({ required_error: "Please select a director" }).uuid(),
-    genreId: z.string({ required_error: "Please select a genre" }).uuid(),
-    starId: z.string({ required_error: "Please select a main star" }).uuid(),
+
+    directorId: z
+      .string({
+        required_error: "Please select a director",
+      })
+      .uuid(),
+
+    genreId: z
+      .string({
+        required_error: "Please select a genre",
+      })
+      .uuid(),
+
+    starId: z
+      .string({
+        required_error: "Please select a main star",
+      })
+      .uuid(),
   }),
 );
 
-const { handleSubmit, isSubmitting, errors, resetForm, setValues } = useForm({
+const { handleSubmit, isSubmitting, errors, resetForm } = useForm({
   validationSchema,
+
   initialValues: {
     title: "",
     description: "",
@@ -52,38 +88,46 @@ const { value: directorId } = useField("directorId");
 const { value: genreId } = useField("genreId");
 const { value: starId } = useField("starId");
 
-watch(
-  () => props.initialData,
-  (newData) => {
-    if (newData) {
-      setValues({
-        title: newData.title || "",
-        description: newData.description || "",
-        duration: newData.duration || 120,
-        directorId: newData.director_id || "",
-        genreId: newData.movie_genres?.[0]?.genre_id || "",
-        starId: newData.movie_stars?.[0]?.star_id || "",
-        thumbnailUrl: newData.movie_images?.[0]?.image_url || "",
-      });
-    }
-  },
-  { immediate: true }
-);
-
 const emit = defineEmits(["submitMovie"]);
 
 const onSubmit = handleSubmit((values) => {
   const graphqlPayload = {
     title: values.title,
+
     description: values.description,
-    director_id: values.directorId,
+
     duration: values.duration,
-    movie_genres: [{ genre_id: values.genreId }],
-    movie_stars: [{ star_id: values.starId }],
-    movie_images: [{ image_url: values.thumbnailUrl, is_featured: true }],
+
+    director_id: values.directorId,
+
+    movie_genres: {
+      data: [
+        {
+          genre_id: values.genreId,
+        },
+      ],
+    },
+
+    movie_stars: {
+      data: [
+        {
+          star_id: values.starId,
+        },
+      ],
+    },
+
+    movie_images: {
+      data: [
+        {
+          image_url: values.thumbnailUrl,
+          is_featured: true,
+        },
+      ],
+    },
   };
 
   emit("submitMovie", graphqlPayload);
+
   resetForm();
 });
 </script>
@@ -93,9 +137,8 @@ const onSubmit = handleSubmit((values) => {
     class="w-full max-w-2xl bg-gray-950 border border-gray-900 rounded-3xl p-6 shadow-2xl text-white"
   >
     <div class="mb-6">
-      <h2 class="text-xl font-bold tracking-wide">
-        {{ initialData ? 'Edit Catalog Movie' : 'Add Catalog Movie' }}
-      </h2>
+      <h2 class="text-xl font-bold tracking-wide">Add Catalog Movie</h2>
+
       <p class="text-xs text-gray-500 mt-1">
         Select and attach relational keys from master tables dynamically.
       </p>
@@ -106,8 +149,10 @@ const onSubmit = handleSubmit((values) => {
         <div class="col-span-2 flex flex-col gap-1.5">
           <label
             class="text-xs font-bold text-gray-400 uppercase tracking-wider"
-            >Movie Title</label
           >
+            Movie Title
+          </label>
+
           <input
             v-model="title"
             type="text"
@@ -117,16 +162,19 @@ const onSubmit = handleSubmit((values) => {
               errors.title ? 'border-red-500' : 'border-gray-800',
             ]"
           />
-          <span v-if="errors.title" class="text-xs text-red-500">{{
-            errors.title
-          }}</span>
+
+          <span v-if="errors.title" class="text-xs text-red-500">
+            {{ errors.title }}
+          </span>
         </div>
 
         <div class="flex flex-col gap-1.5">
           <label
             class="text-xs font-bold text-gray-400 uppercase tracking-wider"
-            >Duration (min)</label
           >
+            Duration (min)
+          </label>
+
           <input
             v-model.number="duration"
             type="number"
@@ -135,16 +183,18 @@ const onSubmit = handleSubmit((values) => {
               errors.duration ? 'border-red-500' : 'border-gray-800',
             ]"
           />
-          <span v-if="errors.duration" class="text-xs text-red-500">{{
-            errors.duration
-          }}</span>
+
+          <span v-if="errors.duration" class="text-xs text-red-500">
+            {{ errors.duration }}
+          </span>
         </div>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"
-          >Featured Thumbnail URL</label
-        >
+        <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">
+          Featured Thumbnail URL
+        </label>
+
         <input
           v-model="thumbnailUrl"
           type="text"
@@ -154,15 +204,17 @@ const onSubmit = handleSubmit((values) => {
             errors.thumbnailUrl ? 'border-red-500' : 'border-gray-800',
           ]"
         />
-        <span v-if="errors.thumbnailUrl" class="text-xs text-red-500">{{
-          errors.thumbnailUrl
-        }}</span>
+
+        <span v-if="errors.thumbnailUrl" class="text-xs text-red-500">
+          {{ errors.thumbnailUrl }}
+        </span>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"
-          >Movie Director</label
-        >
+        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          Movie Director
+        </label>
+
         <select
           v-model="directorId"
           :class="[
@@ -170,22 +222,23 @@ const onSubmit = handleSubmit((values) => {
             errors.directorId ? 'border-red-500' : 'border-gray-800',
           ]"
         >
-          <option value="" disabled selected>
-            Choose the primary director...
-          </option>
+          <option value="" disabled>Choose the primary director...</option>
+
           <option v-for="dir in directorsList" :key="dir.id" :value="dir.id">
             {{ dir.name }}
           </option>
         </select>
-        <span v-if="errors.directorId" class="text-xs text-red-500">{{
-          errors.directorId
-        }}</span>
+
+        <span v-if="errors.directorId" class="text-xs text-red-500">
+          {{ errors.directorId }}
+        </span>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"
-          >Movie Genre</label
-        >
+        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          Movie Genre
+        </label>
+
         <select
           v-model="genreId"
           :class="[
@@ -193,22 +246,23 @@ const onSubmit = handleSubmit((values) => {
             errors.genreId ? 'border-red-500' : 'border-gray-800',
           ]"
         >
-          <option value="" disabled selected>
-            Choose the primary genre...
-          </option>
+          <option value="" disabled>Choose the primary genre...</option>
+
           <option v-for="gen in genresList" :key="gen.id" :value="gen.id">
             {{ gen.name }}
           </option>
         </select>
-        <span v-if="errors.genreId" class="text-xs text-red-500">{{
-          errors.genreId
-        }}</span>
+
+        <span v-if="errors.genreId" class="text-xs text-red-500">
+          {{ errors.genreId }}
+        </span>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"
-          >Lead Star</label
-        >
+        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          Lead Star
+        </label>
+
         <select
           v-model="starId"
           :class="[
@@ -216,22 +270,23 @@ const onSubmit = handleSubmit((values) => {
             errors.starId ? 'border-red-500' : 'border-gray-800',
           ]"
         >
-          <option value="" disabled selected>
-            Choose the primary actor...
-          </option>
+          <option value="" disabled>Choose the primary actor...</option>
+
           <option v-for="star in starsList" :key="star.id" :value="star.id">
             {{ star.name }}
           </option>
         </select>
-        <span v-if="errors.starId" class="text-xs text-red-500">{{
-          errors.starId
-        }}</span>
+
+        <span v-if="errors.starId" class="text-xs text-red-500">
+          {{ errors.starId }}
+        </span>
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider"
-          >Movie Description</label
-        >
+        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          Movie Description
+        </label>
+
         <textarea
           v-model="description"
           rows="3"
@@ -241,9 +296,10 @@ const onSubmit = handleSubmit((values) => {
             errors.description ? 'border-red-500' : 'border-gray-800',
           ]"
         ></textarea>
-        <span v-if="errors.description" class="text-xs text-red-500">{{
-          errors.description
-        }}</span>
+
+        <span v-if="errors.description" class="text-xs text-red-500">
+          {{ errors.description }}
+        </span>
       </div>
 
       <div class="pt-2">
@@ -252,7 +308,7 @@ const onSubmit = handleSubmit((values) => {
           :disabled="isSubmitting"
           class="w-full bg-lime-400 hover:bg-lime-300 disabled:bg-gray-800 text-black font-bold text-sm py-3 rounded-xl shadow-lg transition-all cursor-pointer"
         >
-          {{ isSubmitting ? "Processing relations..." : (initialData ? "Update Movie" : "Save Movie") }}
+          {{ isSubmitting ? "Processing relations..." : "Save Movie" }}
         </button>
       </div>
     </form>

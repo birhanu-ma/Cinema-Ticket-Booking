@@ -1,99 +1,74 @@
 <script setup>
+import { ref } from "vue";
+import { gql } from "@apollo/client/core";
+
 definePageMeta({
   layout: "admin",
 });
 
-const premiumMoviesList = [
-  {
-    title: "Shazam! Fury of the Gods",
-    genre: "Action/Adventure",
-    duration: "130 min",
-    thumbnail:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",
-  },
-  {
-    title: "Mavka: Forest Song",
-    genre: "Animation/Fantasy",
-    duration: 99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500",
-  },
-  {
-    title: "Shazam! Fury of the Gods",
-    genre: "Action/Adventure",
-    duration: "130 min",
-    thumbnail:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",
-  },
-  {
-    title: "Mavka: Forest Song",
-    genre: "Animation/Fantasy",
-    duration: 99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500",
-  },
-  {
-    title: "Shazam! Fury of the Gods",
-    genre: "Action/Adventure",
-    duration: "130 min",
-    thumbnail:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",
-  },
-  {
-    title: "Mavka: Forest Song",
-    genre: "Animation/Fantasy",
-    duration: 99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500",
-  },
-  {
-    title: "Shazam! Fury of the Gods",
-    genre: "Action/Adventure",
-    duration: "130 min",
-    thumbnail:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",
-  },
-  {
-    title: "Mavka: Forest Song",
-    genre: "Animation/Fantasy",
-    duration: 99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500",
-  },
-  {
-    title: "Shazam! Fury of the Gods",
-    genre: "Action/Adventure",
-    duration: "130 min",
-    thumbnail:
-      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",
-  },
-  {
-    title: "Mavka: Forest Song",
-    genre: "Animation/Fantasy",
-    duration: 99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500",
-  },
-  {
-    title: "Mavka: Forest Song",
-    genre: "Animation/Fantasy",
-    duration: 99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500",
-  },
-  {
-    title: "Mavka: Forest Song",
-    genre: "Animation/Fantasy",
-    duration: 99,
-    thumbnail:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500",
-  },
-];
+const { $apollo } = useNuxtApp();
+
+const GET_MOVIES = gql`
+  query GetAdminMovies {
+    movies(order_by: { created_at: desc }) {
+      id
+      title
+      duration
+
+      director {
+        id
+        name
+      }
+
+      movie_genres {
+        genre {
+          id
+          name
+        }
+      }
+
+      movie_images {
+        image_url
+        is_featured
+      }
+
+      schedules_aggregate {
+        aggregate {
+          count
+        }
+      }
+
+      ratings_aggregate {
+        aggregate {
+          avg {
+            rating
+          }
+        }
+      }
+    }
+  }
+`;
+
+const movies = ref([]);
+const loading = ref(true);
+
+try {
+  const { data } = await $apollo.query({
+    query: GET_MOVIES,
+    fetchPolicy: "network-only",
+  });
+
+  movies.value = data.movies;
+} catch (err) {
+  console.error(err);
+} finally {
+  loading.value = false;
+}
 </script>
 
 <template>
   <div
-    class="flex bg-linear-to-t from-[#51751f] to-transparent flex-col gap-6 h-[calc(100vh-4rem)] overflow-hidden"
+    class="flex bg-linear-to-t px-4 from-[#51751f] to-transparent flex-col gap-6 h-[calc(100vh-4rem)] overflow-hidden"
   >
     <div>
       <h1 class="text-2xl font-bold tracking-wide text-gray-100">
@@ -110,9 +85,9 @@ const premiumMoviesList = [
         class="w-full space-y-6 overflow-y-auto pb-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         <AdminMoviesMovieCard
-          v-for="(movieData, i) in premiumMoviesList"
-          :key="i"
-          :movie="movieData"
+          v-for="movie in movies"
+          :key="movie.id"
+          :movie="movie"
         />
       </div>
 
@@ -127,8 +102,14 @@ const premiumMoviesList = [
           <AdminTicketsTicketStatCard bg-color="bg-[#2c6e59]" />
           <AdminTicketsTicketStatCard bg-color="bg-[#adadad]" />
         </div>
-
-        <AdminMoviesAddMovie class="w-150 h-60 rounded-lg" />
+        <AdminSharedAddCard
+          class="w-150 h-60 rounded-lg"
+          subheading="Cinema hall"
+          title="Add a New cinema hall"
+          button-text="Create cinema hall"
+          theme="green"
+          to="/admin/cinemahall/form"
+        />
       </div>
     </div>
   </div>

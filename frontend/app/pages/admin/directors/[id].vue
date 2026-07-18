@@ -1,38 +1,72 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { ref } from "vue";
+import { useRoute } from "#app";
+import { gql } from "@apollo/client/core";
 
 definePageMeta({
   layout: "admin",
 });
 
 const route = useRoute();
-const directorId = route.params.id;
+const { $apollo } = useNuxtApp();
 
-const isLoading = ref(false);
+const GET_DIRECTOR = gql`
+  query GetDirector($id: uuid!) {
+    directors_by_pk(id: $id) {
+      id
+      name
+      bio
+      photo_url
+
+      movies_aggregate {
+        aggregate {
+          count
+        }
+      }
+
+      movies(limit: 5) {
+        id
+      }
+
+      created_at
+    }
+  }
+`;
+
+const isLoading = ref(true);
 const director = ref(null);
 
-onMounted(async () => {
-  isLoading.value = true;
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 450));
+try {
+  const { data } = await $apollo.query({
+    query: GET_DIRECTOR,
+    variables: {
+      id: route.params.id,
+    },
+  });
 
-    director.value = {
-      id: directorId,
-      name: "Christopher Nolan",
-      photo_url:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400",
-      bio: "Christopher Edward Nolan CBE is a British-American filmmaker. Known for his Hollywood blockbusters with personal, intellectual perspectives, Nolan has earned numerous accolades including Academy Awards for Best Director and Best Picture.",
-      role: "Primary Creative Lead",
-      total_movies: 12,
-      joined_at: "March 2026",
-    };
-  } catch (err) {
-    console.error("Failed fetching director details:", err);
-  } finally {
-    isLoading.value = false;
-  }
-});
+  director.value = data.directors_by_pk;
+} catch (err) {
+  console.error(err);
+} finally {
+  isLoading.value = false;
+}
+
+const formatDate = (date) => {
+  if (!date) return "Unknown";
+
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+};
+
+const imageUrl = (director) => {
+  if (director?.photo_url) return director.photo_url;
+
+  return `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(
+    director?.name || "director",
+  )}`;
+};
 </script>
 
 <template>
@@ -72,10 +106,7 @@ onMounted(async () => {
           class="w-full md:w-56 h-72 flex-shrink-0 bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 shadow-inner relative group"
         >
           <img
-            :src="
-              director.photo_url ||
-              'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400'
-            "
+            :src="imageUrl(director)"
             class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
             :alt="director.name"
           />
@@ -87,14 +118,16 @@ onMounted(async () => {
               <span
                 class="text-[10px] bg-lime-400/10 text-lime-400 font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider"
               >
-                {{ director.role }}
+                Director
               </span>
+
               <span
                 class="text-[10px] bg-gray-800 text-gray-400 font-bold px-2.5 py-0.5 rounded-md uppercase tracking-wider"
               >
                 ID: {{ director.id }}
               </span>
             </div>
+
             <h1 class="text-3xl font-extrabold tracking-wide text-gray-100">
               {{ director.name }}
             </h1>
@@ -108,6 +141,7 @@ onMounted(async () => {
             >
               Biography Overview
             </h3>
+
             <p class="text-gray-300 text-sm leading-relaxed">
               {{
                 director.bio ||
@@ -124,22 +158,27 @@ onMounted(async () => {
             >
               <span
                 class="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1"
-                >Cataloged Films</span
               >
-              <span class="text-xl font-extrabold text-lime-400">{{
-                director.total_movies
-              }}</span>
+                Cataloged Films
+              </span>
+
+              <span class="text-xl font-extrabold text-lime-400">
+                {{ director.movies_aggregate.aggregate.count }}
+              </span>
             </div>
+
             <div
               class="bg-gray-900/50 p-4 rounded-2xl border border-gray-900/60"
             >
               <span
                 class="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mb-1"
-                >Database Registered</span
               >
-              <span class="text-sm font-semibold text-gray-200">{{
-                director.joined_at
-              }}</span>
+                Database Registered
+              </span>
+
+              <span class="text-sm font-semibold text-gray-200">
+                {{ formatDate(director.created_at) }}
+              </span>
             </div>
           </div>
         </div>

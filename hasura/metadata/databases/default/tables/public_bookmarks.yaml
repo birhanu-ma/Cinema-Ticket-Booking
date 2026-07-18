@@ -11,9 +11,9 @@ object_relationships:
 insert_permissions:
   - role: user
     permission:
-      check:
-        user_id:
-          _eq: X-Hasura-User-Id
+      check: {}
+      set:
+        user_id: x-hasura-User-Id
       columns:
         - created_at
         - updated_at
@@ -26,9 +26,9 @@ select_permissions:
     permission:
       columns:
         - created_at
-        - updated_at
         - id
         - schedule_id
+        - updated_at
         - user_id
       filter:
         user_id:
