@@ -1,5 +1,6 @@
 <script setup>
-import { useForm, useField } from "vee-validate";
+import { ref } from "vue";
+import { useForm, useField, useFieldArray } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 
@@ -22,47 +23,32 @@ const props = defineProps({
 
 const validationSchema = toTypedSchema(
   z.object({
-    title: z
-      .string({
-        required_error: "Movie title is required",
-      })
-      .min(1),
+    title: z.string({ required_error: "Movie title is required" }).min(1),
 
     description: z
-      .string({
-        required_error: "Description is required",
-      })
+      .string({ required_error: "Description is required" })
       .min(10),
 
-    duration: z
-      .number({
-        required_error: "Duration is required",
-      })
-      .positive(),
+    duration: z.number({ required_error: "Duration is required" }).positive(),
 
-    thumbnailUrl: z
-      .string({
-        required_error: "Thumbnail URL is required",
-      })
-      .url(),
+    directorId: z.string({ required_error: "Please select a director" }).uuid(),
 
-    directorId: z
-      .string({
-        required_error: "Please select a director",
-      })
-      .uuid(),
+    genreIds: z.array(z.string().uuid()).min(1, "Select at least one genre"),
 
-    genreId: z
-      .string({
-        required_error: "Please select a genre",
-      })
-      .uuid(),
+    starIds: z.array(z.string().uuid()).min(1, "Select at least one star"),
 
-    starId: z
-      .string({
-        required_error: "Please select a main star",
-      })
-      .uuid(),
+    images: z
+      .array(
+        z.object({
+          url: z.string().url(),
+          isFeatured: z.boolean(),
+        }),
+      )
+      .min(1, "Upload at least one image")
+      .refine(
+        (imgs) => imgs.filter((i) => i.isFeatured).length === 1,
+        "Exactly one image must be marked as featured",
+      ),
   }),
 );
 
@@ -74,55 +60,77 @@ const { handleSubmit, isSubmitting, errors, resetForm } = useForm({
     description: "",
     duration: 120,
     directorId: "",
-    genreId: "",
-    starId: "",
-    thumbnailUrl: "",
+    genreIds: [],
+    starIds: [],
+    images: [],
   },
 });
 
 const { value: title } = useField("title");
 const { value: description } = useField("description");
 const { value: duration } = useField("duration");
-const { value: thumbnailUrl } = useField("thumbnailUrl");
 const { value: directorId } = useField("directorId");
-const { value: genreId } = useField("genreId");
-const { value: starId } = useField("starId");
+const { value: genreIds } = useField("genreIds");
+const { value: starIds } = useField("starIds");
+
+const {
+  fields: imageFields,
+  push: pushImage,
+  remove: removeImage,
+} = useFieldArray("images");
+
+const addImageSlot = () => {
+  pushImage({ url: "", isFeatured: imageFields.value.length === 0 });
+};
+
+const setFeatured = (index) => {
+  imageFields.value.forEach((field, i) => {
+    field.value.isFeatured = i === index;
+  });
+};
+
+const toggleGenre = (genreId) => {
+  const current = genreIds.value || [];
+
+  if (current.includes(genreId)) {
+    genreIds.value = current.filter((id) => id !== genreId);
+  } else {
+    genreIds.value = [...current, genreId];
+  }
+};
+
+const toggleStar = (starId) => {
+  const current = starIds.value || [];
+
+  if (current.includes(starId)) {
+    starIds.value = current.filter((id) => id !== starId);
+  } else {
+    starIds.value = [...current, starId];
+  }
+};
 
 const emit = defineEmits(["submitMovie"]);
 
 const onSubmit = handleSubmit((values) => {
   const graphqlPayload = {
     title: values.title,
-
     description: values.description,
-
     duration: values.duration,
-
     director_id: values.directorId,
 
     movie_genres: {
-      data: [
-        {
-          genre_id: values.genreId,
-        },
-      ],
+      data: values.genreIds.map((genre_id) => ({ genre_id })),
     },
 
     movie_stars: {
-      data: [
-        {
-          star_id: values.starId,
-        },
-      ],
+      data: values.starIds.map((star_id) => ({ star_id })),
     },
 
     movie_images: {
-      data: [
-        {
-          image_url: values.thumbnailUrl,
-          is_featured: true,
-        },
-      ],
+      data: values.images.map((img) => ({
+        image_url: img.url,
+        is_featured: img.isFeatured,
+      })),
     },
   };
 
@@ -130,6 +138,9 @@ const onSubmit = handleSubmit((values) => {
 
   resetForm();
 });
+
+// Start with one image slot by default
+addImageSlot();
 </script>
 
 <template>
@@ -190,23 +201,62 @@ const onSubmit = handleSubmit((values) => {
         </div>
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-xs text-gray-400 font-bold uppercase tracking-wider">
-          Featured Thumbnail URL
-        </label>
+      <!-- Images -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center justify-between">
+          <label
+            class="text-xs font-bold text-gray-400 uppercase tracking-wider"
+          >
+            Movie Images
+          </label>
 
-        <input
-          v-model="thumbnailUrl"
-          type="text"
-          placeholder="https://images.unsplash.com/..."
-          :class="[
-            'w-full bg-gray-900 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lime-400',
-            errors.thumbnailUrl ? 'border-red-500' : 'border-gray-800',
-          ]"
-        />
+          <button
+            type="button"
+            @click="addImageSlot"
+            class="text-xs text-lime-400 hover:text-lime-300 cursor-pointer font-semibold"
+          >
+            + Add Image
+          </button>
+        </div>
 
-        <span v-if="errors.thumbnailUrl" class="text-xs text-red-500">
-          {{ errors.thumbnailUrl }}
+        <div class="grid grid-cols-2 gap-4">
+          <div
+            v-for="(field, index) in imageFields"
+            :key="field.key"
+            class="flex flex-col gap-2 bg-gray-900/40 border border-gray-900 rounded-xl p-3"
+          >
+            <AdminImageUploader
+              v-model="field.value.url"
+              :label="`Image ${index + 1}`"
+            />
+
+            <div class="flex items-center justify-between">
+              <label
+                class="flex items-center gap-2 text-xs text-gray-400 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="featuredImage"
+                  :checked="field.value.isFeatured"
+                  @change="setFeatured(index)"
+                  class="accent-lime-400 cursor-pointer"
+                />
+                Set as featured
+              </label>
+
+              <button
+                type="button"
+                @click="removeImage(index)"
+                class="text-xs text-gray-600 hover:text-red-400 cursor-pointer"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <span v-if="errors.images" class="text-xs text-red-500">
+          {{ errors.images }}
         </span>
       </div>
 
@@ -222,7 +272,7 @@ const onSubmit = handleSubmit((values) => {
             errors.directorId ? 'border-red-500' : 'border-gray-800',
           ]"
         >
-          <option value="" disabled>Choose the primary director...</option>
+          <option value="" disabled>Choose the director...</option>
 
           <option v-for="dir in directorsList" :key="dir.id" :value="dir.id">
             {{ dir.name }}
@@ -234,51 +284,63 @@ const onSubmit = handleSubmit((values) => {
         </span>
       </div>
 
+      <!-- Genres (multi-select) -->
       <div class="flex flex-col gap-1.5">
         <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">
-          Movie Genre
+          Genres
         </label>
 
-        <select
-          v-model="genreId"
-          :class="[
-            'w-full bg-gray-900 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lime-400 cursor-pointer',
-            errors.genreId ? 'border-red-500' : 'border-gray-800',
-          ]"
+        <div
+          class="flex flex-wrap gap-2 bg-gray-900 border border-gray-800 rounded-xl p-3"
         >
-          <option value="" disabled>Choose the primary genre...</option>
+          <button
+            v-for="genre in genresList"
+            :key="genre.id"
+            type="button"
+            @click="toggleGenre(genre.id)"
+            class="px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-colors"
+            :class="
+              genreIds?.includes(genre.id)
+                ? 'bg-lime-400 text-black'
+                : 'bg-gray-800 text-gray-400 hover:text-white'
+            "
+          >
+            {{ genre.name }}
+          </button>
+        </div>
 
-          <option v-for="gen in genresList" :key="gen.id" :value="gen.id">
-            {{ gen.name }}
-          </option>
-        </select>
-
-        <span v-if="errors.genreId" class="text-xs text-red-500">
-          {{ errors.genreId }}
+        <span v-if="errors.genreIds" class="text-xs text-red-500">
+          {{ errors.genreIds }}
         </span>
       </div>
 
+      <!-- Stars (multi-select) -->
       <div class="flex flex-col gap-1.5">
         <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">
-          Lead Star
+          Stars
         </label>
 
-        <select
-          v-model="starId"
-          :class="[
-            'w-full bg-gray-900 border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-lime-400 cursor-pointer',
-            errors.starId ? 'border-red-500' : 'border-gray-800',
-          ]"
+        <div
+          class="flex flex-wrap gap-2 bg-gray-900 border border-gray-800 rounded-xl p-3"
         >
-          <option value="" disabled>Choose the primary actor...</option>
-
-          <option v-for="star in starsList" :key="star.id" :value="star.id">
+          <button
+            v-for="star in starsList"
+            :key="star.id"
+            type="button"
+            @click="toggleStar(star.id)"
+            class="px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-colors"
+            :class="
+              starIds?.includes(star.id)
+                ? 'bg-lime-400 text-black'
+                : 'bg-gray-800 text-gray-400 hover:text-white'
+            "
+          >
             {{ star.name }}
-          </option>
-        </select>
+          </button>
+        </div>
 
-        <span v-if="errors.starId" class="text-xs text-red-500">
-          {{ errors.starId }}
+        <span v-if="errors.starIds" class="text-xs text-red-500">
+          {{ errors.starIds }}
         </span>
       </div>
 

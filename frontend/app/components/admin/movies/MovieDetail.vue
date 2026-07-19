@@ -34,13 +34,6 @@ defineProps({
         >
           {{ genre }}
         </span>
-
-        <button
-          @click.stop.prevent="console.log('Context menu triggered')"
-          class="text-gray-500 hover:text-white transition-colors text-lg leading-none cursor-pointer p-1"
-        >
-          ⋮
-        </button>
       </div>
 
       <h3
@@ -52,25 +45,6 @@ defineProps({
 
     <div class="w-full h-px bg-gray-900 my-4"></div>
 
-    <div class="flex items-center justify-between gap-4">
-      <div class="flex flex-col gap-0.5">
-        <span
-          class="text-[10px] text-gray-500 font-bold uppercase tracking-wider"
-        >
-          Duration
-        </span>
-
-        <div
-          class="flex items-center gap-1.5 text-gray-300 text-xs font-semibold"
-        >
-          <span class="text-gray-400">🕒</span>
-
-          <span>
-            {{ typeof duration === "number" ? `${duration} min` : duration }}
-          </span>
-        </div>
-      </div>
-    </div>
     <div class="flex items-center justify-between gap-4">
       <div class="flex flex-col gap-0.5">
         <span

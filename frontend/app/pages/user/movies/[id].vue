@@ -196,7 +196,12 @@ await loadMovie();
 
             <MovieStars :stars="movie.movie_stars" />
           </div>
-          <MovieAboutTheMovie :movie="movie" class="min-h-44" />
+          <MovieAboutTheMovie :movie="movie" class="min-h-44 max-w-285" />
+          
+          <MovieRelatedMovie
+            :movie-id="movie.id"
+            :genres="movie.movie_genres"
+          />
         </div>
 
         <div class="flex flex-col gap-6">

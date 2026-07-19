@@ -91,12 +91,12 @@ try {
           <AdminTicketsTicketStatCard bg-color="bg-[#adadad]" />
         </div>
         <AdminSharedAddCard
-          class="w-150 h-60 rounded-lg"
+          class="w-150 h-60 rounded-lg mx-auto"
           subheading="Cinema hall"
           title="Add a New cinema hall"
           button-text="Create cinema hall"
           theme="green"
-          to="/admin/cinemahall/form"
+          to="/admin/cinemahall/new"
         />
       </div>
     </div>

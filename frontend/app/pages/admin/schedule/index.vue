@@ -109,7 +109,7 @@ try {
           title="Add a New Schedule"
           button-text="Create schedule"
           theme="green"
-          to="/admin/schedule/form"
+          to="/admin/schedule/new"
         />
       </div>
     </div>

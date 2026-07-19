@@ -19,34 +19,13 @@ const formatDate = (date) => {
     class="flex-1 p-5 flex flex-col justify-between hover:bg-gray-900/40 rounded-r-3xl transition-all duration-300 group block cursor-pointer"
   >
     <div>
-      <div class="flex items-center justify-between mb-2">
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-mono text-gray-500">
-            #{{ ticket.booking_reference || ticket.id }}
-          </span>
-
-          <span
-            class="text-[10px] bg-red-500/10 text-red-400 font-bold px-2 py-0.5 rounded uppercase tracking-wider"
-          >
-            High
-          </span>
-        </div>
-
-        <button
-          @click.stop.prevent="console.log('Ticket action menu triggered')"
-          class="text-gray-500 hover:text-white transition-colors text-lg p-1 cursor-pointer"
-        >
-          ⋮
-        </button>
-      </div>
+      <div class="flex items-center justify-between mb-2"></div>
 
       <h3
         class="text-white text-lg font-bold leading-snug tracking-wide group-hover:text-lime-400 transition-colors"
       >
         {{
-          ticket.movie_title ||
-          ticket.schedule?.movie?.title ||
-          "Unknown Movie"
+          ticket.movie_title || ticket.schedule?.movie?.title || "Unknown Movie"
         }}
       </h3>
     </div>
@@ -62,9 +41,7 @@ const formatDate = (date) => {
         </span>
 
         <div class="flex items-center gap-1.5">
-          <span
-            class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"
-          ></span>
+          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
 
           <span class="text-amber-500 text-xs font-bold">
             {{ ticket.status }}
@@ -86,10 +63,7 @@ const formatDate = (date) => {
 
           <span>
             {{
-              formatDate(
-                ticket.schedule_time ||
-                ticket.schedule?.start_time
-              )
+              formatDate(ticket.schedule_time || ticket.schedule?.start_time)
             }}
           </span>
         </div>

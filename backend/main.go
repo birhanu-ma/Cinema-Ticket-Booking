@@ -26,6 +26,11 @@ log.Println(dbConfig.ToDSN())
 		DB:          dbPool,
 		ChapaSecret: os.Getenv("CHAPA_SECRET_KEY"),
 	}
+	uploadService := &services.Upload{
+		UploadDir: "./uploads",
+		BaseURL:   "http://localhost:8081",
+	}
 
-	routers.Routers(paymentService, authService)
+
+	routers.Routers(paymentService, authService,uploadService)
 }

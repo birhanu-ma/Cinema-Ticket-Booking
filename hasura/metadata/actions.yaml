@@ -47,6 +47,13 @@ actions:
         version: 2
     permissions:
       - role: anonymous
+  - name: uploadImage
+    definition:
+      kind: synchronous
+      handler: http://host.docker.internal:8081/actions/upload-image
+    permissions:
+      - role: anonymous
+      - role: user
 custom_types:
   enums: []
   input_objects:
@@ -58,4 +65,5 @@ custom_types:
     - name: User
     - name: PaymentInitResponse
     - name: BookingResponse
+    - name: UploadImageResponse
   scalars: []

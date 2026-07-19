@@ -66,7 +66,14 @@ try {
       </div>
 
       <div class="flex flex-col gap-6 sticky top-0 h-fit flex-shrink-0 pb-12">
-        <AdminDirectorsAddDirector class="w-150 h-60 rounded-lg" />
+        <AdminSharedAddCard
+          class="w-150 h-60 rounded-lg"
+          subheading="Cinema"
+          title="Add Director"
+          button-text="Create Director"
+          theme="green"
+          to="/admin/directors/new"
+        />
       </div>
     </div>
   </div>

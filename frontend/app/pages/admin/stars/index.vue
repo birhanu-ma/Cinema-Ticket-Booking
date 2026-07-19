@@ -70,8 +70,14 @@ try {
       </div>
 
       <div class="flex flex-col gap-6 sticky top-0 h-fit flex-shrink-0 pb-12">
-        <AdminStarsAddStar class="w-150 h-60 rounded-lg" />
-      </div>
+   <AdminSharedAddCard
+          class="w-150 h-60 rounded-lg"
+          subheading="star"
+          title="Add a New Star"
+          button-text="Create Star"
+          theme="green"
+          to="/admin/stars/new"
+        />      </div>
     </div>
   </div>
 </template>

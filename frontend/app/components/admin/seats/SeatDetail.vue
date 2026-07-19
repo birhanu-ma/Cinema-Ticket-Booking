@@ -61,12 +61,7 @@ const typeClass = (type) => {
           Seat
         </span>
 
-        <button
-          @click.stop.prevent
-          class="text-gray-500 hover:text-white transition-colors"
-        >
-          ⋮
-        </button>
+     
       </div>
 
       <h3

@@ -4,6 +4,7 @@ const menuItems = [
   { label: "Bookmark", icon: "", to: "/user/bookmarks" },
   { label: "Directors", icon: "", to: "/user/directors" },
   { label: "Genre", icon: "", to: "/user/genres" },
+  { label: "My Ticket", icon: "", to: "/user/tickets" },
 ];
 </script>
 

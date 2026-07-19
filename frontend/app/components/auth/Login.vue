@@ -1,4 +1,3 @@
-```vue
 <script setup>
 import { ref } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
@@ -32,6 +31,27 @@ const schema = yup.object({
     .min(6, "Password must be at least 6 characters"),
 });
 
+const decodeJwtRole = (token) => {
+  try {
+    const payloadBase64 = token.split(".")[1];
+
+    const payloadJson = atob(
+      payloadBase64.replace(/-/g, "+").replace(/_/g, "/"),
+    );
+
+    const payload = JSON.parse(payloadJson);
+
+    return (
+      payload?.["https://hasura.io/jwt/claims"]?.["x-hasura-default-role"] ||
+      payload?.role ||
+      null
+    );
+  } catch (err) {
+    console.error("Failed to decode JWT:", err);
+    return null;
+  }
+};
+
 const onSubmit = async (values, { resetForm }) => {
   loading.value = true;
 
@@ -46,13 +66,19 @@ const onSubmit = async (values, { resetForm }) => {
       },
     });
 
-    localStorage.setItem("auth-token", data.login.token);
+    const token = data.login.token;
 
-    console.log("JWT:", data.login.token);
+    localStorage.setItem("auth-token", token);
 
     resetForm();
 
-    await navigateTo("/user/movies");
+    const role = decodeJwtRole(token);
+
+    if (role === "admin") {
+      await navigateTo("/admin/movies");
+    } else {
+      await navigateTo("/user/movies");
+    }
   } catch (err) {
     console.error(err);
 
@@ -104,4 +130,3 @@ const onSubmit = async (values, { resetForm }) => {
     </Form>
   </div>
 </template>
-```

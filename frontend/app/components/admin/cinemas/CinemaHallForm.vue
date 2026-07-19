@@ -63,7 +63,7 @@ const onSubmit = handleSubmit((values) => {
 
 <template>
   <div
-    class="w-full max-w-2xl bg-gray-950 border border-gray-900 rounded-3xl p-6 shadow-2xl text-white"
+    class="w-full max-w-2xl mx-auto bg-gray-950 border border-gray-900 rounded-3xl p-6 shadow-2xl text-white"
   >
     <div class="mb-6">
       <h2 class="text-xl font-bold tracking-wide">Create Cinema Hall</h2>

@@ -111,23 +111,9 @@ const onSubmit = handleSubmit((values) => {
       </div>
 
       <div class="flex flex-col gap-1.5">
-        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">
-          Headshot Portrait URL
-
-          <span class="text-gray-600 text-[10px]"> (Optional) </span>
-        </label>
-
-        <input
+        <AdminImageUploader
           v-model="photoUrl"
-          type="text"
-          placeholder="https://images.unsplash.com/photo-..."
-          :class="[
-            'w-full bg-gray-900 border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors placeholder:text-gray-600',
-
-            errors.photoUrl
-              ? 'border-red-500 focus:border-red-500'
-              : 'border-gray-800 focus:border-lime-400',
-          ]"
+          label="Headshot Portrait (Optional)"
         />
 
         <span
