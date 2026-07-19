@@ -6,7 +6,7 @@ defineProps({
   },
   count: {
     type: [Number, String],
-    required: true,
+    required: false,
   },
   bgColor: {
     type: String,

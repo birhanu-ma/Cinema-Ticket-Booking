@@ -155,8 +155,7 @@ const loadMovie = async () => {
       error.value = "Movie not found";
     }
   } catch (err) {
-    console.log("========== MOVIE LOAD ERROR ==========");
-    console.error(err);
+   
 
     error.value = err.message;
   } finally {
@@ -183,13 +182,7 @@ await loadMovie();
 
     <div v-else-if="movie" class="flex flex-col gap-10">
       <div class="flex flex-row gap-8">
-        <!--
-          flex-1 + min-w-0: this column always fills whatever space is
-          left over after the fixed-width sidebar, instead of shrinking
-          or growing to fit its own content (description length, related
-          movie count, etc.) - that content-driven sizing was why the
-          column's width differed between movies.
-        -->
+    
         <div class="flex flex-col gap-5 flex-1 min-w-0">
           <MovieWatchThriller :movie="movie" />
 
@@ -207,12 +200,7 @@ await loadMovie();
           />
         </div>
 
-        <!--
-          w-96 + shrink-0: fixed-width sidebar that never resizes based
-          on its own content or the left column's content. Adjust w-96
-          to match your actual intended sidebar width - this is a
-          starting value, not a measured one.
-        -->
+      
         <div class="flex flex-col gap-6 w-96 shrink-0">
           <BookingCinemaSession :movie="movie" />
 

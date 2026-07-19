@@ -55,13 +55,16 @@ select_permissions:
   - role: user
     permission:
       columns:
-        - price
         - created_at
-        - start_time
-        - updated_at
+        - end_time
+        - format
         - hall_id
         - id
+        - language
         - movies_id
+        - price
+        - start_time
+        - updated_at
       filter: {}
       allow_aggregations: true
     comment: ""

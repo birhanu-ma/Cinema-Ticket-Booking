@@ -128,7 +128,6 @@ const onSubmit = handleSubmit((values) => {
         </p>
       </div>
 
-
       <div>
         <label class="text-xs uppercase text-gray-400"> Ticket Price </label>
 
@@ -143,7 +142,6 @@ const onSubmit = handleSubmit((values) => {
           {{ errors.price }}
         </p>
       </div>
-
 
       <div>
         <label class="text-xs uppercase text-gray-400"> Show Date </label>
@@ -164,7 +162,7 @@ const onSubmit = handleSubmit((values) => {
       <button
         type="submit"
         :disabled="isSubmitting"
-        class="w-full bg-lime-400 text-black font-bold py-3 rounded-xl"
+        class="w-full bg-lime-400 cursor-pointer text-black font-bold py-3 rounded-xl"
       >
         {{ isSubmitting ? "Saving..." : "Create Schedule" }}
       </button>

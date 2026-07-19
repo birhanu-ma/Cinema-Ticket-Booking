@@ -122,7 +122,7 @@ const handleScheduleSubmit = async (payload) => {
 
     console.log("Schedule seats created");
 
-    router.push("/admin/schedules");
+    router.push("/admin/schedule");
   } catch (error) {
     console.error("Creation failed:", error);
   }
