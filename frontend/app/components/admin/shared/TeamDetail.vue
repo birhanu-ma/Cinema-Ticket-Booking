@@ -58,12 +58,7 @@ const description = computed(() => {
           {{ role }}
         </span>
 
-        <button
-          @click.stop.prevent="console.log('Context menu triggered')"
-          class="text-gray-500 hover:text-white transition-colors text-lg leading-none p-1 cursor-pointer"
-        >
-          ⋮
-        </button>
+      
       </div>
 
       <h3

@@ -62,13 +62,16 @@ const handleHallSubmit = async (payload) => {
 
 <template>
   <div
-    class="min-h-screen bg-linear-to-t from-[#51751f] to-transparent text-white p-8"
+    class="h-screen w-full flex flex-col items-center overflow-y-auto p-8 gap-6 bg-linear-to-t from-[#51751f] to-transparent text-white"
   >
-    <NuxtLink to="/admin/cinema-halls" class="text-xs text-lime-400">
-      ← Back Halls
-    </NuxtLink>
-
-    <h1 class="text-2xl font-bold mt-3">Add Cinema Hall</h1>
+    <div class="w-full max-w-2xl text-left">
+      <NuxtLink
+        to="/admin/cinema-halls"
+        class="text-xs text-lime-400 hover:underline"
+      >
+        ← Back Halls
+      </NuxtLink>
+    </div>
 
     <div v-if="isLoading">Loading cinemas...</div>
 

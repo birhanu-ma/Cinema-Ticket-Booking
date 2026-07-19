@@ -36,7 +36,7 @@ const displayText = computed(() => {
       <button
         v-if="movie?.description?.length > maxLength"
         @click="isExpanded = !isExpanded"
-        class="ml-2 text-lime-400 font-medium hover:text-lime-300 transition-colors"
+        class="ml-2 text-lime-400 font-medium cursor-pointer hover:text-lime-300 transition-colors"
       >
         {{ isExpanded ? "Read Less" : "Read More" }}
       </button>

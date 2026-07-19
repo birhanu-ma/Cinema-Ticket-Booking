@@ -97,7 +97,7 @@ try {
           title="Add a New seat"
           button-text="Create seat"
           theme="green"
-          to="/admin/seat/form"
+          to="/admin/seat/new"
         />
 
       </div>

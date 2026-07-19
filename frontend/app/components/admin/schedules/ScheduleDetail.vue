@@ -54,12 +54,7 @@ const formatDate = (date) => {
           Schedule
         </span>
 
-        <button
-          @click.stop.prevent
-          class="text-gray-500 hover:text-white text-lg"
-        >
-          ⋮
-        </button>
+      
       </div>
 
       <h3

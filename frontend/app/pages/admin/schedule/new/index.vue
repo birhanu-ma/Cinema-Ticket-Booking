@@ -76,7 +76,6 @@ const handleScheduleSubmit = async (payload) => {
   try {
     console.log("Schedule payload:", payload);
 
-
     const scheduleResult = await $apollo.mutate({
       mutation: INSERT_SCHEDULE,
 
@@ -88,7 +87,6 @@ const handleScheduleSubmit = async (payload) => {
     const schedule = scheduleResult.data.insert_schedules_one;
 
     console.log("Created schedule:", schedule);
-
 
     const seatsResult = await $apollo.query({
       query: GET_SEATS,
@@ -103,7 +101,6 @@ const handleScheduleSubmit = async (payload) => {
     const seats = seatsResult.data.seats;
 
     console.log("Hall seats:", seats);
-
 
     const scheduleSeats = seats.map((seat) => ({
       schedule_id: schedule.id,
@@ -134,15 +131,18 @@ const handleScheduleSubmit = async (payload) => {
 
 <template>
   <div
-    class="min-h-screen bg-linear-to-t from-[#51751f] to-transparent text-white p-8"
+    class="h-screen w-full flex flex-col items-center overflow-y-auto p-8 gap-6 bg-linear-to-t from-[#51751f] to-transparent text-white"
   >
-    <NuxtLink to="/admin/schedules" class="text-lime-400 text-xs">
-      ← Back Schedules
-    </NuxtLink>
+    <div class="w-full max-w-2xl text-left">
+      <NuxtLink
+        to="/admin/schedules"
+        class="text-lime-400 text-xs hover:underline"
+      >
+        ← Back Schedules
+      </NuxtLink>
+    </div>
 
-    <h1 class="text-2xl font-bold mt-3">Create Schedule</h1>
-
-    <div v-if="loading" class="mt-10 text-gray-400">Loading...</div>
+    <div v-if="loading" class="text-gray-400">Loading...</div>
 
     <AdminSchedulesScheduleForm
       v-else

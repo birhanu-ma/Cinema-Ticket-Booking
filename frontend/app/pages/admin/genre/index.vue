@@ -18,7 +18,13 @@ const handleGenreInsert = async (cleanPayload) => {
     <div
       class="flex-1 overflow-y-auto p-8 flex flex-col items-center justify-center gap-6"
     >
-      <AdminGenreForm @submit-genre="handleGenreInsert" />
-    </div>
+   <AdminSharedAddCard
+          class="w-150 h-60 rounded-lg"
+          subheading="Cinema"
+          title="Add a New Genre"
+          button-text="Create Genre"
+          theme="green"
+          to="/admin/genre"
+        />    </div>
   </div>
 </template>

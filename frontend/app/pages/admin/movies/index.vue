@@ -105,10 +105,10 @@ try {
         <AdminSharedAddCard
           class="w-150 h-60 rounded-lg"
           subheading="Cinema hall"
-          title="Add a New cinema hall"
-          button-text="Create cinema hall"
+          title="Add New Movie"
+          button-text="Create Movie"
           theme="green"
-          to="/admin/cinemahall/form"
+          to="/admin/movies/new"
         />
       </div>
     </div>

@@ -23,6 +23,14 @@ type Mutation {
   ): SignupResponse!
 }
 
+type Mutation {
+  uploadImage(
+    base64: String!
+    filename: String!
+    content_type: String!
+  ): UploadImageResponse!
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -65,5 +73,11 @@ type BookingResponse {
   ticket_ids: [uuid!]
   payment_id: uuid
   amount: Int
+}
+
+type UploadImageResponse {
+  success: Boolean!
+  message: String!
+  url: String
 }
 
