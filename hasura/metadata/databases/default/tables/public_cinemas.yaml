@@ -17,6 +17,16 @@ array_relationships:
           name: schedules
           schema: public
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - location
+        - name
+        - created_at
+        - update_at
+        - id
+      filter: {}
+    comment: ""
   - role: user
     permission:
       columns:

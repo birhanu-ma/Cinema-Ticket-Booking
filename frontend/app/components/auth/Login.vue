@@ -5,6 +5,7 @@ import * as yup from "yup";
 import { gql } from "@apollo/client/core";
 
 const { $apollo } = useNuxtApp();
+const { login } = useAuth();
 
 const loading = ref(false);
 
@@ -68,7 +69,8 @@ const onSubmit = async (values, { resetForm }) => {
 
     const token = data.login.token;
 
-    localStorage.setItem("auth-token", token);
+  
+    login(token);
 
     resetForm();
 

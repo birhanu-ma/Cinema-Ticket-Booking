@@ -1,28 +1,16 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { useRoute } from "#app";
 import { gql } from "@apollo/client/core";
 
 definePageMeta({
   layout: "user",
 });
 
-const route = useRoute();
 const { $apollo } = useNuxtApp();
 
-const GET_GENRE_MOVIES = gql`
-  query GetGenreMovies($genreId: uuid!, $where: movies_bool_exp!) {
-    genres_by_pk(id: $genreId) {
-      id
-      name
-    }
-
-    movies(
-      order_by: { created_at: desc }
-      where: {
-        _and: [{ movie_genres: { genre_id: { _eq: $genreId } } }, $where]
-      }
-    ) {
+const GET_MOVIES = gql`
+  query GetMovies($where: movies_bool_exp) {
+    movies(order_by: { created_at: desc }, where: $where) {
       id
       title
 
@@ -48,7 +36,6 @@ const GET_GENRE_MOVIES = gql`
   }
 `;
 
-const genre = ref(null);
 const movies = ref([]);
 const loading = ref(true);
 const error = ref("");
@@ -124,20 +111,14 @@ const fetchMovies = async () => {
 
   try {
     const { data } = await $apollo.query({
-      query: GET_GENRE_MOVIES,
+      query: GET_MOVIES,
       variables: {
-        genreId: route.params.id,
         where: buildWhere(),
       },
       fetchPolicy: "network-only",
     });
 
-    genre.value = data.genres_by_pk;
     movies.value = data.movies;
-
-    if (!genre.value) {
-      error.value = "Genre not found";
-    }
   } catch (err) {
     console.error(err);
     error.value = err.message || "Failed to load movies";
@@ -181,29 +162,12 @@ await fetchMovies();
 
 <template>
   <div
-    class="min-h-screen bg-gradient-to-t from-[#51751f] to-transparent px-6 py-10"
+    class="flex h-screen bg-gradient-to-t from-[#51751f] to-transparent overflow-hidden"
   >
-    <NuxtLink
-      to="/user/genres"
-      class="text-gray-400 hover:text-lime-400 text-sm mb-6 inline-block"
-    >
-      ← All Genres
-    </NuxtLink>
-
-    <div v-if="loading && !genre" class="text-white text-center pt-12">
-      Loading movies...
-    </div>
-
-    <div v-else-if="error" class="bg-red-900 text-white rounded-lg p-6">
-      {{ error }}
-    </div>
-
-    <template v-else>
-      <h1 class="text-3xl font-bold text-white mb-6">
-        {{ genre?.name }}
-      </h1>
-
-      <div class="mb-4">
+    <div class="flex-1 overflow-y-auto px-6 pb-4">
+      <div
+        class="sticky top-0 z-20 bg-gray-900 bg-gradient-to-t from-[#51751f] to-transparent pb-4"
+      >
         <SearchBar v-model="searchQuery" class="mb-4" />
         <SearchFilter
           @filter-change="handleFilterChange"
@@ -215,11 +179,15 @@ await fetchMovies();
         Loading movies...
       </div>
 
+      <div v-else-if="error" class="bg-red-900 text-white rounded-lg p-6 mt-4">
+        {{ error }}
+      </div>
+
       <div
         v-else-if="filteredMovies.length === 0"
         class="text-gray-400 text-center pt-12"
       >
-        No movies found in this genre.
+        No movies match your search.
       </div>
 
       <div
@@ -232,6 +200,6 @@ await fetchMovies();
           :movie="movie"
         />
       </div>
-    </template>
+    </div>
   </div>
 </template>

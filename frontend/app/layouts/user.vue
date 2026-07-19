@@ -1,11 +1,24 @@
 <script setup>
-const menuItems = [
-  { label: "Movies", icon: "", to: "/user/movies" },
-  { label: "Bookmark", icon: "", to: "/user/bookmarks" },
-  { label: "Directors", icon: "", to: "/user/directors" },
-  { label: "Genre", icon: "", to: "/user/genres" },
-  { label: "My Ticket", icon: "", to: "/user/tickets" },
-];
+import { computed } from "vue";
+
+const { loggedIn } = useAuth();
+
+const menuItems = computed(() => {
+  const items = [
+    { label: "Movies", icon: "", to: "/user/movies" },
+    { label: "Directors", icon: "", to: "/user/directors" },
+    { label: "Genre", icon: "", to: "/user/genres" },
+  ];
+
+  if (loggedIn.value) {
+    items.push(
+      { label: "Bookmark", icon: "", to: "/user/bookmarks" },
+      { label: "My Ticket", icon: "", to: "/user/tickets" },
+    );
+  }
+
+  return items;
+});
 </script>
 
 <template>

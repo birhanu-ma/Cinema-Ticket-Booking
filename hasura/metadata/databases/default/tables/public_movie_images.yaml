@@ -6,6 +6,16 @@ object_relationships:
     using:
       foreign_key_constraint_on: movie_id
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - is_featured
+        - image_url
+        - created_at
+        - id
+        - movie_id
+      filter: {}
+    comment: ""
   - role: user
     permission:
       columns:
