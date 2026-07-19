@@ -8,7 +8,6 @@ definePageMeta({
 });
 
 const route = useRoute();
-
 const { $apollo } = useNuxtApp();
 
 const cinema = ref(null);
@@ -21,12 +20,12 @@ const GET_CINEMA = gql`
       name
       location
       created_at
+    }
 
-      cinema_halls {
-        id
-        name
-        capacity
-      }
+    cinema_halls(where: { cinema_id: { _eq: $id } }) {
+      id
+      name
+      capacity
     }
   }
 `;
@@ -34,15 +33,16 @@ const GET_CINEMA = gql`
 try {
   const { data } = await $apollo.query({
     query: GET_CINEMA,
-
     variables: {
       id: route.params.id,
     },
-
     fetchPolicy: "network-only",
   });
 
-  cinema.value = data.cinemas_by_pk;
+  cinema.value = {
+    ...data.cinemas_by_pk,
+    cinema_halls: data.cinema_halls,
+  };
 } catch (err) {
   console.error(err);
 } finally {
@@ -55,7 +55,7 @@ try {
     class="min-h-screen bg-linear-to-t from-[#51751f] to-transparent text-white p-8 flex justify-center"
   >
     <div class="max-w-4xl w-full">
-      <NuxtLink to="/admin/cinemas" class="text-lime-400 text-xs">
+      <NuxtLink to="/admin/cinema" class="text-lime-400 text-xs">
         ← Back Cinemas
       </NuxtLink>
 
@@ -86,7 +86,12 @@ try {
             <p class="text-xs text-gray-500">Total Capacity</p>
 
             <p class="text-2xl font-bold">
-              {{ cinema.cinema_halls.reduce((a, b) => a + b.capacity, 0) }}
+              {{
+                cinema.cinema_halls.reduce(
+                  (total, hall) => total + hall.capacity,
+                  0,
+                )
+              }}
             </p>
           </div>
         </div>

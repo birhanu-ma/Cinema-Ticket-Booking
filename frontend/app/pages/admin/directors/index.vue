@@ -30,6 +30,7 @@ const directors = ref([]);
 try {
   const { data } = await $apollo.query({
     query: GET_DIRECTORS,
+    fetchPolicy: "network-only",
   });
 
   directors.value = data.directors;
