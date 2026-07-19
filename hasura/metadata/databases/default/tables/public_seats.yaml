@@ -14,6 +14,17 @@ array_relationships:
           name: schedule_seats
           schema: public
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - seat_number
+        - row_name
+        - type
+        - created_at
+        - hall_id
+        - id
+      filter: {}
+    comment: ""
   - role: user
     permission:
       columns:

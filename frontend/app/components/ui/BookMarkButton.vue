@@ -10,6 +10,7 @@ const props = defineProps({
 });
 
 const { $apollo } = useNuxtApp();
+const { loggedIn } = useAuth();
 
 const isBookmarked = ref(false);
 const bookmarkId = ref(null);
@@ -46,6 +47,13 @@ const REMOVE_BOOKMARK = gql`
 `;
 
 const checkStatus = async () => {
+  // Bookmarks are private per user, so skip the lookup entirely when logged out
+  if (!loggedIn.value) {
+    isBookmarked.value = false;
+    bookmarkId.value = null;
+    return;
+  }
+
   try {
     const { data } = await $apollo.query({
       query: CHECK_BOOKMARK,
@@ -68,6 +76,11 @@ const checkStatus = async () => {
 };
 
 const toggleBookmark = async () => {
+  if (!loggedIn.value) {
+    await navigateTo("/auth/signup");
+    return;
+  }
+
   if (loading.value) return;
 
   loading.value = true;

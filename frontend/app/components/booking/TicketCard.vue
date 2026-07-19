@@ -10,6 +10,7 @@ const props = defineProps({
 });
 
 const { $apollo } = useNuxtApp();
+const { loggedIn } = useAuth();
 
 const selectedHall = ref("");
 const selectedSeats = ref([]);
@@ -115,6 +116,11 @@ const INITIATE_PAYMENT = gql`
 
 const buyTickets = async () => {
   bookingError.value = "";
+
+  if (!loggedIn.value) {
+    await navigateTo("/auth/signup");
+    return;
+  }
 
   if (selectedSeats.value.length === 0) {
     bookingError.value = "Please select at least one seat";

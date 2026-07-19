@@ -7,6 +7,8 @@ const menuItems = [
   { label: "Movies", icon: "", to: "/admin/movies" },
   { label: "Directors", icon: "", to: "/admin/directors" },
   { label: "Stars", icon: "", to: "/admin/stars" },
+  { label: "Genre", icon: "", to: "/admin/genre" },
+
   { label: "Schedule", icon: "", to: "/admin/schedule" },
 
   { label: "Tickets", icon: "", to: "/admin/tickets" },

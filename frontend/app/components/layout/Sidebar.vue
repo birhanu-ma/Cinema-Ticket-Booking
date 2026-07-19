@@ -17,8 +17,7 @@ const isLoggedIn = computed(() => {
 });
 
 const isItemActive = (path) => {
-  return route.path === path ||
-  route.path.startsWith(path + "/");
+  return route.path === path || route.path.startsWith(path + "/");
 };
 </script>
 
@@ -47,11 +46,11 @@ const isItemActive = (path) => {
       Logout
     </button>
 
-    <NuxtLink v-else to="/auth/login" class="mt-auto">
+    <NuxtLink v-else to="/auth/signup" class="mt-auto">
       <button
-        class="w-full rounded-lg bg-lime-400 py-2 font-semibold text-black"
+        class="w-full rounded-lg bg-lime-400 cursor-pointer py-2 font-semibold text-black"
       >
-        Login
+        Signin
       </button>
     </NuxtLink>
   </nav>

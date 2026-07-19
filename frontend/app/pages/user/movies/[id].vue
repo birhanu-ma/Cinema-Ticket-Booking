@@ -117,7 +117,6 @@ const loadMovie = async () => {
     error.value = "";
 
     console.log("========== ROUTE ID ==========");
-
     console.log(route.params.id);
 
     const { data } = await $apollo.query({
@@ -131,19 +130,15 @@ const loadMovie = async () => {
     });
 
     console.log("========== FULL RESPONSE ==========");
-
     console.log(data);
 
     console.log("========== MOVIE OBJECT ==========");
-
     console.log(data.movies_by_pk);
 
     console.log("========== SCHEDULES ==========");
-
     console.log(data.movies_by_pk?.schedules);
 
     console.log("========== SCHEDULE SEATS ==========");
-
     console.log(
       data.movies_by_pk?.schedules?.map((schedule) => ({
         scheduleId: schedule.id,
@@ -160,9 +155,7 @@ const loadMovie = async () => {
       error.value = "Movie not found";
     }
   } catch (err) {
-    console.log("========== MOVIE LOAD ERROR ==========");
-
-    console.error(err);
+   
 
     error.value = err.message;
   } finally {
@@ -189,22 +182,26 @@ await loadMovie();
 
     <div v-else-if="movie" class="flex flex-col gap-10">
       <div class="flex flex-row gap-8">
-        <div class="flex flex-col gap-5">
+    
+        <div class="flex flex-col gap-5 flex-1 min-w-0">
           <MovieWatchThriller :movie="movie" />
+
           <div class="flex flex-row gap-8">
             <MovieDirector :director="movie.director" />
 
             <MovieStars :stars="movie.movie_stars" />
           </div>
+
           <MovieAboutTheMovie :movie="movie" class="min-h-44 max-w-285" />
-          
+
           <MovieRelatedMovie
             :movie-id="movie.id"
             :genres="movie.movie_genres"
           />
         </div>
 
-        <div class="flex flex-col gap-6">
+      
+        <div class="flex flex-col gap-6 w-96 shrink-0">
           <BookingCinemaSession :movie="movie" />
 
           <BookingTicketCard :movie="movie" />

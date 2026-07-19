@@ -10,6 +10,7 @@ const props = defineProps({
 });
 
 const { $apollo } = useNuxtApp();
+const { loggedIn } = useAuth();
 
 const myRating = ref(null);
 const hoverStar = ref(0);
@@ -66,6 +67,11 @@ const checkMyRating = async () => {
 const submitRating = async () => {
   errorMsg.value = "";
 
+  if (!loggedIn.value) {
+    await navigateTo("/auth/signup");
+    return;
+  }
+
   if (selectedStar.value === 0) {
     errorMsg.value = "Please select a star rating";
     return;
@@ -87,8 +93,7 @@ const submitRating = async () => {
   } catch (err) {
     console.error("Failed to submit rating:", err);
 
-    const message =
-      err?.graphQLErrors?.[0]?.message || err?.message || "";
+    const message = err?.graphQLErrors?.[0]?.message || err?.message || "";
 
     if (message.includes("unique") || message.includes("duplicate")) {
       errorMsg.value = "You've already rated this movie";
@@ -132,9 +137,7 @@ watch(
         {{ myRating.review }}
       </p>
 
-      <p class="text-gray-500 text-xs mt-3">
-        You've already rated this movie
-      </p>
+      <p class="text-gray-500 text-xs mt-3">You've already rated this movie</p>
     </div>
 
     <div v-else>
@@ -148,9 +151,7 @@ watch(
           @mouseleave="hoverStar = 0"
           class="text-3xl cursor-pointer transition-colors"
           :class="
-            n <= (hoverStar || selectedStar)
-              ? 'text-lime-400'
-              : 'text-gray-700'
+            n <= (hoverStar || selectedStar) ? 'text-lime-400' : 'text-gray-700'
           "
         >
           ★

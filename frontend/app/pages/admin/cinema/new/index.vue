@@ -28,7 +28,7 @@ const handleCinemaSubmit = async (payload) => {
       },
     });
 
-    router.push("/admin/cinemas");
+    router.push("/admin/cinema");
   } catch (err) {
     console.error("Cinema creation failed:", err);
   }

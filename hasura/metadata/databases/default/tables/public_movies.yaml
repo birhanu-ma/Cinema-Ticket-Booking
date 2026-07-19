@@ -42,6 +42,19 @@ array_relationships:
           name: schedules
           schema: public
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - duration
+        - description
+        - title
+        - created_at
+        - updated_at
+        - director_id
+        - id
+      filter: {}
+      allow_aggregations: true
+    comment: ""
   - role: user
     permission:
       columns:

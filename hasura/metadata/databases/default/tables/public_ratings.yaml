@@ -24,6 +24,19 @@ insert_permissions:
         - user_id
     comment: ""
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - rating
+        - review
+        - created_at
+        - updated_at
+        - id
+        - movie_id
+        - user_id
+      filter: {}
+      allow_aggregations: true
+    comment: ""
   - role: user
     permission:
       columns:

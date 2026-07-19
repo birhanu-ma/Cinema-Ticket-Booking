@@ -56,7 +56,7 @@ const handleHallSubmit = async (payload) => {
     },
   });
 
-  router.push("/admin/cinema-halls");
+  router.push("/admin/cinemaHall");
 };
 </script>
 

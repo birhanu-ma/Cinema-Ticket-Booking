@@ -10,6 +10,17 @@ array_relationships:
           name: movie_stars
           schema: public
 select_permissions:
+  - role: anonymous
+    permission:
+      columns:
+        - name
+        - bio
+        - photo_url
+        - created_at
+        - update_at
+        - id
+      filter: {}
+    comment: ""
   - role: user
     permission:
       columns:

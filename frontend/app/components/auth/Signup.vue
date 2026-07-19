@@ -57,11 +57,11 @@ const onSubmit = async (values, { resetForm }) => {
       },
     });
 
-    alert(data.signup.message);
-
     console.log("Registered User:", data.signup.user);
 
     resetForm();
+
+    await navigateTo("/auth/login");
   } catch (err) {
     console.error(err);
 
@@ -136,5 +136,15 @@ const onSubmit = async (values, { resetForm }) => {
         {{ loading ? "Creating Account..." : "Create Account" }}
       </button>
     </Form>
+
+    <p class="mt-6 text-center text-sm text-zinc-400">
+      Already have an account?
+      <NuxtLink
+        to="/auth/login"
+        class="font-semibold text-lime-500 hover:text-lime-400"
+      >
+        Log in
+      </NuxtLink>
+    </p>
   </div>
 </template>

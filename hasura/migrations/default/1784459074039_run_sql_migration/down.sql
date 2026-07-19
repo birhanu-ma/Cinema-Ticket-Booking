@@ -1,0 +1,3 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- ALTER TABLE schedules DROP CONSTRAINT schedules_cinema_id_fkey;
