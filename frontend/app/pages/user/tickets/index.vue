@@ -84,8 +84,10 @@ try {
 </script>
 
 <template>
-  <div class="min-h-screen bg-lime-50 px-4 py-12">
-    <h1 class="text-3xl font-bold text-lime-900 mb-8 text-center">
+  <div
+    class="min-h-screen bg-gradient-to-t from-[#51751f] to-transparent px-4 py-12"
+  >
+    <h1 class="text-3xl font-bold text-gray-100 0 mb-8 text-center">
       My Tickets
     </h1>
 
