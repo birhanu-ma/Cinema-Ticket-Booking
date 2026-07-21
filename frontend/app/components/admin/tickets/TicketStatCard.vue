@@ -2,7 +2,7 @@
 defineProps({
   title: {
     type: String,
-    default: "All Tickets",
+    default: "coming soon",
   },
   count: {
     type: [Number, String],

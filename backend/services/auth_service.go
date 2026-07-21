@@ -31,7 +31,6 @@ func (r *Register) Signup(c *gin.Context) {
 	req.Name = strings.TrimSpace(req.Name)
 	req.Email = strings.ToLower(strings.TrimSpace(req.Email))
 
-	// Check if email already exists
 	var exists bool
 	err := r.DB.QueryRow(
 		"SELECT EXISTS(SELECT 1 FROM users WHERE email=$1)",
